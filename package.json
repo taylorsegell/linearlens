@@ -1,0 +1,177 @@
+{
+  "name": "linear-connect",
+  "displayName": "Linear Connect",
+  "description": "Official Linear API authentication provider and sidebar for VS Code. OAuth for extensions plus Issues, Projects, Initiatives, and Reviews tree.",
+  "publisher": "linear",
+  "author": "Linear Orbit, Inc",
+  "license": "MIT",
+  "version": "2.0.0",
+  "icon": "assets/128x128.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/taylorsegell/linearlens"
+  },
+  "engines": {
+    "vscode": "^1.96.0"
+  },
+  "extensionKind": [
+    "ui"
+  ],
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "capabilities": {
+    "virtualWorkspaces": true,
+    "untrustedWorkspaces": {
+      "supported": true
+    }
+  },
+  "main": "./dist/main.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "linear-explorer",
+          "title": "Linear",
+          "icon": "assets/128x128.png"
+        }
+      ]
+    },
+    "views": {
+      "linear-explorer": [
+        {
+          "id": "linear.sidebar",
+          "name": "Linear",
+          "icon": "$(list-tree)"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "linear.setApiKey",
+        "title": "Linear: Set API Key",
+        "icon": "$(key)"
+      },
+      {
+        "command": "linear.refresh",
+        "title": "Linear: Refresh",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "linear.openInBrowser",
+        "title": "Linear: Open in Browser",
+        "icon": "$(link-external)"
+      },
+      {
+        "command": "linear.filterIssuesByStatus",
+        "title": "Linear: Filter Issues by Status",
+        "icon": "$(filter)"
+      },
+      {
+        "command": "linear.filterIssuesByProject",
+        "title": "Linear: Filter Issues by Project",
+        "icon": "$(folder-library)"
+      },
+      {
+        "command": "linear.clearIssueFilters",
+        "title": "Linear: Clear Issue Filters",
+        "icon": "$(filter-filled)"
+      },
+      {
+        "command": "linear-connect.logout",
+        "title": "Linear: Logout all Linear API sessions",
+        "when": "linear-connect.hasLinearSessions"
+      },
+      {
+        "command": "linear.openIssue",
+        "title": "Linear: Open Issue",
+        "icon": "$(issue-opened)"
+      },
+      {
+        "command": "linear.openIssueInBrowser",
+        "title": "Linear: Open Issue in Browser",
+        "icon": "$(link-external)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "linear.refresh",
+          "when": "view == linear.sidebar",
+          "group": "navigation"
+        },
+        {
+          "command": "linear.openInBrowser",
+          "when": "view == linear.sidebar",
+          "group": "navigation"
+        },
+        {
+          "command": "linear.setApiKey",
+          "when": "view == linear.sidebar",
+          "group": "navigation"
+        },
+        {
+          "command": "linear.filterIssuesByStatus",
+          "when": "view == linear.sidebar",
+          "group": "navigation@1"
+        },
+        {
+          "command": "linear.filterIssuesByProject",
+          "when": "view == linear.sidebar",
+          "group": "navigation@1"
+        },
+        {
+          "command": "linear.clearIssueFilters",
+          "when": "view == linear.sidebar",
+          "group": "navigation@1"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "linear.openIssueInBrowser",
+          "when": "view == linear.sidebar && viewItem == linearIssue",
+          "group": "navigation"
+        }
+      ]
+    },
+    "authentication": [
+      {
+        "label": "Linear",
+        "id": "linear"
+      }
+    ]
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit -p ./",
+    "vscode:prepublish": "npm run esbuild-base -- --minify",
+    "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=dist/main.js --external:vscode --format=cjs --platform=node",
+    "esbuild": "npm run esbuild-base -- --sourcemap",
+    "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
+    "compile": "npm run typecheck",
+    "build:webview": "vite build --config vite.webview.config.ts",
+    "build:webview:watch": "vite build --config vite.webview.config.ts --watch",
+    "build": "yarn esbuild && yarn build:webview"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@types/vscode": "^1.96.0",
+    "@vitejs/plugin-react": "^4.3.0",
+    "@vscode/vsce": "^3.9.2",
+    "esbuild": "^0.25.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "typescript": "^5.7.0",
+    "vite": "^6.0.0",
+    "vitest": "^3.0.0"
+  },
+  "dependencies": {
+    "@linear/sdk": "^87.0.0"
+  }
+}
