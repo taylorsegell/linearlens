@@ -9,15 +9,18 @@ import {
   NotificationCategory,
 } from "@linear/sdk";
 import { mapIssueDetail } from "./issueDetailMapper";
+import { mapBoardIssue } from "./boardIssueMapper";
 import {
   buildCommentCreateInput,
   buildIssueUpdateInput,
 } from "./mutations";
 import type {
+  BoardIssuesPage,
   LinearConnectionState,
   LinearInitiativeSummary,
   LinearIssueDetail,
   LinearIssueSummary,
+  LinearProjectBoardMeta,
   LinearProjectSummary,
   LinearReviewSummary,
   LinearWorkflowState,
@@ -26,6 +29,7 @@ import type { LinearSectionId } from "../config";
 import type { IssuePatch } from "../webview/messaging";
 
 const PAGE_SIZE = 50;
+const BOARD_PAGE_SIZE = 50;
 
 function formatError(error: unknown): string {
     if (error instanceof LinearError) {
@@ -391,6 +395,102 @@ export class LinearService {
       throw new Error("Linear rejected comment creation.");
     }
     return this.fetchIssueDetail(issueId);
+  }
+
+  private async mapBoardIssueNode(
+    issue: Awaited<ReturnType<LinearClient["issue"]>>
+  ) {
+    const [state, assignee, projectMilestone, labelsConnection] =
+      await Promise.all([
+        issue.state,
+        issue.assignee,
+        issue.projectMilestone,
+        issue.labels(),
+      ]);
+
+    if (!state) {
+      throw new Error(`Issue ${issue.id} is missing workflow state.`);
+    }
+
+    return mapBoardIssue({
+      id: issue.id,
+      identifier: issue.identifier,
+      title: issue.title,
+      url: issue.url,
+      updatedAt: issue.updatedAt.toISOString(),
+      createdAt: issue.createdAt.toISOString(),
+      priority: issue.priority,
+      priorityLabel: issue.priorityLabel,
+      state: {
+        id: state.id,
+        name: state.name,
+        type: state.type,
+        color: state.color,
+      },
+      assignee: assignee
+        ? {
+            id: assignee.id,
+            name: assignee.displayName ?? assignee.name,
+          }
+        : undefined,
+      labels: labelsConnection.nodes.map((label) => ({
+        id: label.id,
+        name: label.name,
+        color: label.color,
+      })),
+      milestone: projectMilestone
+        ? { id: projectMilestone.id, name: projectMilestone.name }
+        : undefined,
+    });
+  }
+
+  async fetchProjectBoardMeta(
+    projectId: string
+  ): Promise<LinearProjectBoardMeta> {
+    if (!this.client) {
+      throw new Error("Linear API key is not configured.");
+    }
+
+    const project = await this.client.project(projectId);
+    const teamsConnection = await project.teams();
+    const team = teamsConnection.nodes[0];
+    if (!team) {
+      throw new Error("Project has no linked team.");
+    }
+
+    return {
+      id: project.id,
+      name: project.name,
+      url: project.url,
+      teamId: team.id,
+      progress: progressPercent(project.progress) ?? 0,
+    };
+  }
+
+  async fetchProjectBoardPage(
+    projectId: string,
+    cursor?: string,
+    pageSize: number = BOARD_PAGE_SIZE
+  ): Promise<BoardIssuesPage> {
+    if (!this.client) {
+      throw new Error("Linear API key is not configured.");
+    }
+
+    const project = await this.client.project(projectId);
+    const connection = await project.issues({
+      first: pageSize,
+      after: cursor,
+    });
+
+    const issues = await Promise.all(
+      connection.nodes.map((issue) => this.mapBoardIssueNode(issue))
+    );
+
+    return {
+      issues,
+      hasNextPage: connection.pageInfo.hasNextPage,
+      endCursor: connection.pageInfo.endCursor ?? undefined,
+    };
   }
 }
 

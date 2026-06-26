@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import * as crypto from "node:crypto";
 import type { LinearService } from "../linear/linearClient";
 import { IssueDetailCache } from "../linear/issueCache";
-import { getIssueDetailWebviewHtml } from "./getWebviewHtml";
+import { getWebviewHtml } from "./getWebviewHtml";
 import {
   isWebviewRequest,
   type ExtensionMessage,
@@ -52,10 +52,11 @@ export class IssueDetailPanel implements vscode.Disposable {
     );
 
     const nonce = crypto.randomBytes(16).toString("hex");
-    panel.webview.html = getIssueDetailWebviewHtml(
+    panel.webview.html = getWebviewHtml(
       panel.webview,
       extensionUri,
-      nonce
+      nonce,
+      { panel: "issue", issueId }
     );
 
     return new IssueDetailPanel(

@@ -48,6 +48,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
   const panelManager = new PanelManager(
     context.extensionUri,
+    context.workspaceState,
     () => linearService,
     (issueId) => {
       treeProvider.refresh();

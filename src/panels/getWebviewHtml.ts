@@ -1,10 +1,12 @@
 import * as vscode from "vscode";
 import * as fs from "node:fs";
+import type { WebviewPanelBootstrap } from "../webview/messaging";
 
-export function getIssueDetailWebviewHtml(
+export function getWebviewHtml(
   webview: vscode.Webview,
   extensionUri: vscode.Uri,
-  nonce: string
+  nonce: string,
+  bootstrap: WebviewPanelBootstrap
 ): string {
   const distDir = vscode.Uri.joinPath(extensionUri, "dist", "webview");
   const indexPath = vscode.Uri.joinPath(distDir, "index.html");
@@ -28,6 +30,8 @@ export function getIssueDetailWebviewHtml(
       )
     : undefined;
 
+  const bootstrapJson = JSON.stringify(bootstrap).replace(/</g, "\\u003c");
+
   const csp = [
     "default-src 'none'",
     `img-src ${webview.cspSource} https: data:`,
@@ -42,12 +46,26 @@ export function getIssueDetailWebviewHtml(
   <meta charset="UTF-8" />
   <meta http-equiv="Content-Security-Policy" content="${csp}" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Linear Issue</title>
+  <title>Linear</title>
   ${styleUri ? `<link rel="stylesheet" href="${styleUri}">` : ""}
 </head>
 <body>
   <div id="root"></div>
+  <script nonce="${nonce}">
+    window.__LINEAR_PANEL__ = ${bootstrapJson};
+  </script>
   <script nonce="${nonce}" type="module" src="${scriptUri}"></script>
 </body>
 </html>`;
+}
+
+/** @deprecated Use getWebviewHtml */
+export function getIssueDetailWebviewHtml(
+  webview: vscode.Webview,
+  extensionUri: vscode.Uri,
+  nonce: string
+): string {
+  return getWebviewHtml(webview, extensionUri, nonce, {
+    panel: "issue",
+  });
 }
