@@ -127,7 +127,7 @@ export function KanbanBoardView({
                   <DroppableColumn key={state.id} stateId={state.id}>
                     <header
                       className="column-header"
-                      style={{ borderColor: state.color }}
+                      style={{ borderTopColor: state.color }}
                     >
                       {state.name}
                       <span className="column-count">
