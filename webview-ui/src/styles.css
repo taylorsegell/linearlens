@@ -90,6 +90,10 @@ textarea {
   --ll-radius-segment: 3px;
   --ll-shadow-button: 0 1px 0.5px rgba(0, 0, 0, 0.15);
 }
+.ll-icon svg {
+  width: 100%;
+  height: 100%;
+}
 
 .board-app {
   display: flex;

@@ -25,7 +25,7 @@ export function Icon({ name, size = 16, className, label }: IconProps) {
   const svg = ICONS[name];
   return (
     <span
-      className={className}
+      className={["ll-icon", className].filter(Boolean).join(" ")}
       role={label ? "img" : undefined}
       aria-label={label}
       aria-hidden={label ? undefined : true}
