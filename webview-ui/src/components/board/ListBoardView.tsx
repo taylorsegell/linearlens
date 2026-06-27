@@ -3,7 +3,7 @@ import { FixedSizeList } from "react-window";
 import { sortIssuesForList } from "../../boardLogic";
 import type { BoardIssueCard } from "../../hooks/useBoardMessaging";
 
-const ROW_HEIGHT = 36;
+const ROW_HEIGHT = 44;
 
 interface ListBoardViewProps {
   issues: BoardIssueCard[];
@@ -74,6 +74,7 @@ export function ListBoardView({
               </button>
               <span className="list-title">{issue.title}</span>
               <select
+                className="list-status-select"
                 value={issue.state.id}
                 onChange={(e) => onChangeStatus(issue.id, e.target.value)}
               >
