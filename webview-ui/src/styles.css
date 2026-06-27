@@ -73,6 +73,24 @@ textarea {
   opacity: 0.7;
 }
 
+:root {
+  --ll-bg-base: var(--vscode-editor-background);
+  --ll-bg-elevated: var(--vscode-sideBar-background);
+  --ll-bg-control: var(--vscode-button-secondaryBackground);
+  --ll-bg-control-active: var(--vscode-button-background);
+  --ll-border: var(--vscode-panel-border);
+  --ll-text-primary: var(--vscode-foreground);
+  --ll-text-secondary: var(--vscode-descriptionForeground);
+  --ll-text-link: var(--vscode-textLink-foreground);
+  --ll-focus: var(--vscode-focusBorder);
+  --ll-hover: var(--vscode-list-hoverBackground);
+  --ll-font-mini: 12px;
+  --ll-font-small: 13px;
+  --ll-radius-sm: 4px;
+  --ll-radius-segment: 3px;
+  --ll-shadow-button: 0 1px 0.5px rgba(0, 0, 0, 0.15);
+}
+
 .board-app {
   display: flex;
   flex-direction: column;
