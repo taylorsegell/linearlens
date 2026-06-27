@@ -1,8 +1,12 @@
+import { readBootstrap } from "./bootstrap";
 import { useVscodeMessaging } from "./hooks/useVscodeMessaging";
 import { IssueDetailView } from "./components/IssueDetailView";
+import { BoardApp } from "./components/board/BoardApp";
 import "./styles.css";
 
-export function App() {
+const bootstrap = readBootstrap();
+
+function IssueDetailApp() {
   const { issue, workflowStates, error, post } = useVscodeMessaging();
   if (!issue) {
     return <main className="loading">Loading issue…</main>;
@@ -17,4 +21,11 @@ export function App() {
       />
     </main>
   );
+}
+
+export function App() {
+  if (bootstrap.panel === "board") {
+    return <BoardApp />;
+  }
+  return <IssueDetailApp />;
 }

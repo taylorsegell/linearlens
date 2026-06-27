@@ -9,6 +9,8 @@ import {
   CMD_FILTER_ISSUES_STATUS,
   CMD_OPEN_ISSUE,
   CMD_OPEN_ISSUE_IN_BROWSER,
+  CMD_OPEN_PROJECT_BOARD,
+  CMD_OPEN_PROJECT_IN_BROWSER,
   CMD_OPEN_LINEAR,
   CMD_REFRESH,
   CMD_SET_API_KEY,
@@ -221,6 +223,59 @@ export function registerLinearCommands(
           );
           return;
         }
+        if (url) {
+          void vscode.env.openExternal(vscode.Uri.parse(url));
+        }
+      }
+    ),
+
+    vscode.commands.registerCommand(
+      CMD_OPEN_PROJECT_BOARD,
+      async (projectId?: string, label?: string) => {
+        const service = ctx.getService();
+        if (!service.isConfigured()) {
+          void vscode.window.showWarningMessage(
+            "Linear is not connected. Set your API key first."
+          );
+          return;
+        }
+
+        let id = projectId;
+        let tabLabel = label;
+        if (!id) {
+          const projects = ctx
+            .getTreeProvider()
+            .getCachedSection("projects") as
+            | import("./linear/types").LinearProjectSummary[]
+            | undefined;
+          if (!projects?.length) {
+            void vscode.window.showInformationMessage(
+              "No projects loaded. Refresh the Linear sidebar first."
+            );
+            return;
+          }
+          const pick = await vscode.window.showQuickPick(
+            projects.map((p) => ({
+              label: p.name,
+              description: `${p.state} · ${p.progress}%`,
+              projectId: p.id,
+            })),
+            { placeHolder: "Select a project board" }
+          );
+          if (!pick) {
+            return;
+          }
+          id = pick.projectId;
+          tabLabel = pick.label;
+        }
+
+        ctx.getPanelManager().openBoard(id!, tabLabel ?? "Project Board");
+      }
+    ),
+
+    vscode.commands.registerCommand(
+      CMD_OPEN_PROJECT_IN_BROWSER,
+      (_projectId: string, _label: string, url?: string) => {
         if (url) {
           void vscode.env.openExternal(vscode.Uri.parse(url));
         }

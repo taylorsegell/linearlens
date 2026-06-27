@@ -5,6 +5,7 @@
 import * as vscode from "vscode";
 import {
   CMD_OPEN_ISSUE,
+  CMD_OPEN_PROJECT_BOARD,
   LINEAR_SECTIONS,
   type LinearSectionId,
 } from "../config";
@@ -143,6 +144,11 @@ export class LinearTreeDataProvider
       return [];
     }
     return entry.items as LinearIssueSummary[];
+  }
+
+  getCachedSection(sectionId: LinearSectionId) {
+    const entry = this.cache.get(sectionId);
+    return entry?.state === "loaded" ? entry.items : undefined;
   }
 
   async ensureIssuesCached(): Promise<LinearIssueSummary[]> {
@@ -479,6 +485,12 @@ function mapItems(
           project.url,
           tooltip
         );
+        item.command = {
+          command: CMD_OPEN_PROJECT_BOARD,
+          title: "Open Project Board",
+          arguments: [project.id, project.name, project.url],
+        };
+        item.contextValue = "linearProject";
         item.description = `${project.state} · ${project.progress}%`;
         return item;
       });

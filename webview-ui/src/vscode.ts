@@ -6,3 +6,7 @@ declare function acquireVsCodeApi(): {
 
 export const vscode =
   typeof acquireVsCodeApi === "function" ? acquireVsCodeApi() : undefined;
+
+export function postToExtension(message: unknown): void {
+  vscode?.postMessage(message);
+}

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { vscode } from "../vscode";
+import { postToExtension } from "../vscode";
 
 export interface WorkflowStateOption {
   id: string;
@@ -51,7 +51,7 @@ export function useVscodeMessaging() {
   const [error, setError] = useState<string | null>(null);
 
   const post = useCallback((message: unknown) => {
-    vscode?.postMessage(message);
+    postToExtension(message);
   }, []);
 
   useEffect(() => {

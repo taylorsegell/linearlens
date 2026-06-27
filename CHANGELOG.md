@@ -10,6 +10,14 @@ All notable changes to the "linear-connect" extension will be documented in this
 - Add comments from the panel
 - View sub-issues and labels inline
 - Context menu: Open Issue in Browser
+- Project Kanban board — open from sidebar project click or **Linear: Open Project Board** command
+- List view toggle with sortable columns and inline status changes
+- Drag-and-drop status changes on Kanban cards (optimistic UI)
+- Board filters: status, label, assignee, and title search
+- Phase-label swimlane grouping (default; configurable via `linear.board.phaseLabelPrefix`)
+- Virtualized scrolling for large projects with paginated load-more
+- Click board card → opens existing Task Detail panel
+- Context menu: Open Project in Browser
 
 ## [2.0.0] - 2026-06-22
 
