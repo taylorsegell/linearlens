@@ -112,6 +112,9 @@ textarea {
   color: var(--vscode-button-foreground);
   border-color: var(--ll-bg-control-active);
 }
+.ll-chip--active:hover {
+  background: var(--ll-bg-control-active);
+}
 .ll-chip--dashed {
   border-style: dashed;
 }
@@ -222,15 +225,6 @@ textarea {
   display: flex;
   gap: 6px;
 }
-.board-footer button {
-  background: var(--vscode-button-secondaryBackground);
-  color: var(--vscode-button-secondaryForeground);
-  border: 1px solid var(--vscode-panel-border);
-  border-radius: 4px;
-  padding: 4px 10px;
-  cursor: pointer;
-  font-size: 0.8125rem;
-}
 .board-filter-section {
   display: flex;
   flex-wrap: wrap;
@@ -278,7 +272,7 @@ textarea {
 }
 .board-footer {
   padding: 8px 16px;
-  border-top: 1px solid var(--vscode-panel-border);
+  border-top: 1px solid var(--ll-border);
   text-align: center;
 }
 .kanban-board {

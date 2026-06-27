@@ -77,7 +77,7 @@ export function BoardApp() {
       )}
       {hasNextPage && (
         <footer className="board-footer">
-          <button type="button" onClick={loadMore}>
+          <button type="button" className="ll-btn-secondary" onClick={loadMore}>
             Load more issues
           </button>
         </footer>

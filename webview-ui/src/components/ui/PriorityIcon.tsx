@@ -3,7 +3,7 @@ interface PriorityIconProps {
   className?: string;
 }
 
-const BAR_HEIGHTS = [3, 5, 7, 9, 11];
+const BAR_HEIGHTS = [3, 5, 8, 11];
 
 export function PriorityIcon({ priority, className }: PriorityIconProps) {
   if (priority <= 0) {
