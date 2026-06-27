@@ -4,6 +4,8 @@ import type {
   BoardMeta,
   BoardViewState,
 } from "../../hooks/useBoardMessaging";
+import { Chip } from "../ui/Chip";
+import { SegmentedControl } from "../ui/SegmentedControl";
 
 interface BoardToolbarProps {
   meta: BoardMeta;
@@ -84,32 +86,34 @@ export function BoardToolbar({
           <span className="board-progress">{meta.progress}%</span>
         </h1>
         <div className="board-toolbar-actions">
-          <button type="button" onClick={onRefresh} title="Refresh board">
+          <button
+            type="button"
+            className="ll-btn-secondary"
+            onClick={onRefresh}
+            title="Refresh board"
+          >
             Refresh
           </button>
-          <button type="button" onClick={onOpenExternal}>
+          <button
+            type="button"
+            className="ll-btn-secondary"
+            onClick={onOpenExternal}
+          >
             Open in Linear
           </button>
         </div>
       </div>
 
-      <div className="board-toolbar-row">
-        <div className="view-toggle" role="group" aria-label="View mode">
-          <button
-            type="button"
-            className={viewState.view === "kanban" ? "active" : ""}
-            onClick={() => onViewStateChange({ ...viewState, view: "kanban" })}
-          >
-            Kanban
-          </button>
-          <button
-            type="button"
-            className={viewState.view === "list" ? "active" : ""}
-            onClick={() => onViewStateChange({ ...viewState, view: "list" })}
-          >
-            List
-          </button>
-        </div>
+      <div className="board-toolbar-row board-toolbar-row--controls">
+        <SegmentedControl
+          aria-label="View mode"
+          value={viewState.view}
+          options={[
+            { value: "kanban", icon: "board", label: "Board view" },
+            { value: "list", icon: "view-list", label: "List view" },
+          ]}
+          onChange={(view) => onViewStateChange({ ...viewState, view })}
+        />
 
         <label className="toolbar-field">
           Group by
@@ -144,68 +148,50 @@ export function BoardToolbar({
         </label>
       </div>
 
-      <div className="board-filter-chips">
+      <div className="board-filter-section">
         <span className="filter-label">Status:</span>
         {workflowStates.map((state) => (
-          <button
+          <Chip
             key={state.id}
-            type="button"
-            className={
-              viewState.filters.statusIds.includes(state.id)
-                ? "filter-chip active"
-                : "filter-chip"
-            }
+            active={viewState.filters.statusIds.includes(state.id)}
             onClick={() => toggleStatusFilter(state.id)}
           >
             {state.name}
-          </button>
+          </Chip>
         ))}
+      </div>
 
-        {labelOptions.length > 0 && (
-          <>
-            <span className="filter-label">Labels:</span>
-            {labelOptions.map((label) => (
-              <button
-                key={label.id}
-                type="button"
-                className={
-                  viewState.filters.labelIds.includes(label.id)
-                    ? "filter-chip active"
-                    : "filter-chip"
-                }
-                onClick={() => toggleLabelFilter(label.id)}
-              >
-                {label.name}
-              </button>
-            ))}
-          </>
-        )}
+      {labelOptions.length > 0 && (
+        <div className="board-filter-section">
+          <span className="filter-label">Labels:</span>
+          {labelOptions.map((label) => (
+            <Chip
+              key={label.id}
+              active={viewState.filters.labelIds.includes(label.id)}
+              onClick={() => toggleLabelFilter(label.id)}
+            >
+              {label.name}
+            </Chip>
+          ))}
+        </div>
+      )}
 
+      <div className="board-filter-section">
         <span className="filter-label">Assignee:</span>
-        <button
-          type="button"
-          className={
-            viewState.filters.assigneeIds.includes("__unassigned__")
-              ? "filter-chip active"
-              : "filter-chip"
-          }
+        <Chip
+          active={viewState.filters.assigneeIds.includes("__unassigned__")}
           onClick={() => toggleAssigneeFilter("__unassigned__")}
         >
           Unassigned
-        </button>
+        </Chip>
         {assigneeOptions.map((assignee) => (
-          <button
+          <Chip
             key={assignee.id}
-            type="button"
-            className={
-              viewState.filters.assigneeIds.includes(assignee.id)
-                ? "filter-chip active"
-                : "filter-chip"
-            }
+            active={viewState.filters.assigneeIds.includes(assignee.id)}
             onClick={() => toggleAssigneeFilter(assignee.id)}
           >
             {assignee.name}
-          </button>
+          </Chip>
         ))}
       </div>
 
