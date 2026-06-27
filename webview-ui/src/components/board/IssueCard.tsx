@@ -1,5 +1,6 @@
 import { extractPhaseLabel } from "../../boardLogic";
 import type { BoardIssueCard } from "../../hooks/useBoardMessaging";
+import { PriorityIcon } from "../ui/PriorityIcon";
 
 const PHASE_PREFIX = "phase-";
 
@@ -26,17 +27,15 @@ export function IssueCard({ issue, onOpen }: IssueCardProps) {
     >
       <div className="issue-card-header">
         <span className="issue-card-id">{issue.identifier}</span>
-        {issue.priority > 0 && (
-          <span className="issue-card-priority">{issue.priorityLabel}</span>
-        )}
+        <PriorityIcon priority={issue.priority} />
       </div>
       <p className="issue-card-title">{issue.title}</p>
       <div className="issue-card-footer">
-        {issue.assignee && (
-          <span className="issue-card-assignee">{issue.assignee.name}</span>
-        )}
         {phaseLabel && (
           <span className="issue-card-phase">{phaseLabel}</span>
+        )}
+        {issue.assignee && (
+          <span className="issue-card-assignee">{issue.assignee.name}</span>
         )}
       </div>
     </article>
