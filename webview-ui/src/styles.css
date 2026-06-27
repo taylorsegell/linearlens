@@ -90,6 +90,92 @@ textarea {
   --ll-radius-segment: 3px;
   --ll-shadow-button: 0 1px 0.5px rgba(0, 0, 0, 0.15);
 }
+.ll-chip {
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 8px;
+  font-size: var(--ll-font-mini);
+  font-weight: 500;
+  border-radius: var(--ll-radius-sm);
+  border: 1px solid var(--ll-border);
+  background: transparent;
+  color: var(--ll-text-primary);
+  cursor: pointer;
+  line-height: 1;
+}
+.ll-chip:hover {
+  background: var(--ll-hover);
+}
+.ll-chip--active {
+  background: var(--ll-bg-control-active);
+  color: var(--vscode-button-foreground);
+  border-color: var(--ll-bg-control-active);
+}
+.ll-chip--dashed {
+  border-style: dashed;
+}
+.ll-segmented {
+  display: inline-flex;
+  border: 1px solid var(--ll-border);
+  border-radius: var(--ll-radius-sm);
+  overflow: hidden;
+  height: 24px;
+}
+.ll-segmented__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  border-right: 1px solid var(--ll-border);
+  background: var(--ll-bg-control);
+  color: var(--ll-text-secondary);
+  cursor: pointer;
+  box-shadow: var(--ll-shadow-button);
+}
+.ll-segmented__btn:last-child {
+  border-right: none;
+}
+.ll-segmented__btn:hover {
+  background: var(--ll-hover);
+}
+.ll-segmented__btn--active {
+  background: var(--ll-bg-control-active);
+  color: var(--vscode-button-foreground);
+}
+.ll-priority {
+  display: inline-flex;
+  gap: 1px;
+  align-items: flex-end;
+  height: 12px;
+}
+.ll-priority__bar {
+  width: 2px;
+  background: var(--ll-text-secondary);
+  border-radius: 1px;
+}
+.ll-priority__bar--filled {
+  background: var(--ll-text-primary);
+}
+.ll-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 10px;
+  font-size: var(--ll-font-mini);
+  border-radius: var(--ll-radius-sm);
+  border: 1px solid var(--ll-border);
+  background: var(--ll-bg-control);
+  color: var(--vscode-button-secondaryForeground);
+  cursor: pointer;
+  box-shadow: var(--ll-shadow-button);
+}
+.ll-btn-secondary:hover {
+  background: var(--ll-hover);
+}
 .ll-icon svg {
   width: 100%;
   height: 100%;
