@@ -196,7 +196,13 @@ export function registerLinearCommands(
 
     vscode.commands.registerCommand(
       CMD_OPEN_ISSUE,
-      (issueId: string, label: string, _url?: string) => {
+      (
+        issueId: string,
+        label: string,
+        _url?: string,
+        stateType?: string,
+        stateName?: string
+      ) => {
         if (!issueId) {
           return;
         }
@@ -206,7 +212,11 @@ export function registerLinearCommands(
           );
           return;
         }
-        ctx.getPanelManager().openIssue(issueId, label ?? "Linear Issue");
+        ctx.getPanelManager().openIssue(
+          issueId,
+          label ?? "Linear Issue",
+          stateType && stateName ? { type: stateType, name: stateName } : undefined
+        );
       }
     ),
 

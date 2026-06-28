@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { resolveHiddenStatusIds } from "../../boardColumns";
 import type {
   BoardIssueCard,
   BoardMeta,
@@ -6,12 +7,14 @@ import type {
 } from "../../hooks/useBoardMessaging";
 import { Chip } from "../ui/Chip";
 import { SegmentedControl } from "../ui/SegmentedControl";
+import { StatusColumnPicker } from "./StatusColumnPicker";
 
 interface BoardToolbarProps {
   meta: BoardMeta;
   viewState: BoardViewState;
   workflowStates: { id: string; name: string; color: string }[];
   issues: BoardIssueCard[];
+  effectiveHiddenStatusIds: string[];
   error: string | null;
   onViewStateChange: (next: BoardViewState) => void;
   onRefresh: () => void;
@@ -23,6 +26,7 @@ export function BoardToolbar({
   viewState,
   workflowStates,
   issues,
+  effectiveHiddenStatusIds,
   error,
   onViewStateChange,
   onRefresh,
@@ -47,6 +51,27 @@ export function BoardToolbar({
     }
     return [...map.entries()].map(([id, name]) => ({ id, name }));
   }, [issues]);
+
+  const toggleStatusHidden = (stateId: string) => {
+    const collapsedStatusIds = viewState.collapsedStatusIds ?? [];
+    const currentHidden = resolveHiddenStatusIds(
+      workflowStates,
+      issues,
+      viewState.hiddenStatusIds ?? [],
+      viewState.statusColumnPrefsCustomized ?? false
+    );
+    const isHidden = currentHidden.includes(stateId);
+    onViewStateChange({
+      ...viewState,
+      statusColumnPrefsCustomized: true,
+      hiddenStatusIds: isHidden
+        ? currentHidden.filter((id) => id !== stateId)
+        : [...currentHidden, stateId],
+      collapsedStatusIds: isHidden
+        ? collapsedStatusIds
+        : collapsedStatusIds.filter((id) => id !== stateId),
+    });
+  };
 
   const toggleStatusFilter = (stateId: string) => {
     const statusIds = viewState.filters.statusIds.includes(stateId)
@@ -114,6 +139,14 @@ export function BoardToolbar({
           ]}
           onChange={(view) => onViewStateChange({ ...viewState, view })}
         />
+
+        {viewState.view === "kanban" && (
+          <StatusColumnPicker
+            workflowStates={workflowStates}
+            hiddenStatusIds={effectiveHiddenStatusIds}
+            onToggleHidden={toggleStatusHidden}
+          />
+        )}
 
         <label className="toolbar-field">
           Group by

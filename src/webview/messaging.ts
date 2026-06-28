@@ -4,12 +4,16 @@ import type {
   LinearProjectBoardMeta,
   BoardIssuesPage,
   BoardViewState,
+  TeamLabelOption,
+  TeamMemberOption,
 } from "../linear/types";
 
 export type IssuePatch = Partial<
   Pick<LinearIssueDetail, "title" | "description" | "priority">
 > & {
   stateId?: string;
+  assigneeId?: string | null;
+  labelIds?: string[];
 };
 
 /** webview → extension host */
@@ -19,7 +23,13 @@ export type WebviewRequest =
   | { type: "updateIssue"; issueId: string; patch: IssuePatch }
   | { type: "createComment"; issueId: string; body: string }
   | { type: "openExternal"; url: string }
-  | { type: "openIssue"; issueId: string; label: string }
+  | {
+      type: "openIssue";
+      issueId: string;
+      label: string;
+      stateType?: string;
+      stateName?: string;
+    }
   | {
       type: "moveIssue";
       issueId: string;
@@ -36,6 +46,8 @@ export type ExtensionMessage =
       type: "issueLoaded";
       issue: LinearIssueDetail;
       workflowStates: WorkflowStateOption[];
+      teamMembers: TeamMemberOption[];
+      teamLabels: TeamLabelOption[];
     }
   | { type: "issueUpdated"; issue: LinearIssueDetail }
   | {
@@ -66,10 +78,13 @@ export interface WorkflowStateOption {
   color: string;
 }
 
+export type ThemeKind = "light" | "dark" | "highContrast";
+
 export interface WebviewPanelBootstrap {
   panel: "issue" | "board";
   issueId?: string;
   projectId?: string;
+  themeKind?: ThemeKind;
 }
 
 export function isWebviewRequest(value: unknown): value is WebviewRequest {

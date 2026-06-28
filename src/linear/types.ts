@@ -78,6 +78,7 @@ export interface LinearSubIssueSummary {
   identifier: string;
   title: string;
   state: string;
+  stateType: string;
   stateColor: string;
 }
 
@@ -99,6 +100,17 @@ export interface LinearIssueDetail {
   subIssues: LinearSubIssueSummary[];
   comments: LinearCommentDetail[];
   teamId: string;
+}
+
+export interface TeamMemberOption {
+  id: string;
+  name: string;
+}
+
+export interface TeamLabelOption {
+  id: string;
+  name: string;
+  color?: string;
 }
 
 /** Lightweight issue card for Kanban/List boards. */
@@ -149,6 +161,12 @@ export interface BoardViewState {
   groupBy: BoardGroupBy;
   filters: BoardFilters;
   sortBy: ListSortKey;
+  /** Status columns removed from the board until re-enabled. */
+  hiddenStatusIds: string[];
+  /** Visible status columns collapsed to a narrow rail. */
+  collapsedStatusIds: string[];
+  /** When false, hidden columns follow smart defaults from boardColumns. */
+  statusColumnPrefsCustomized: boolean;
 }
 
 export const DEFAULT_BOARD_FILTERS: BoardFilters = {
@@ -163,6 +181,9 @@ export const DEFAULT_BOARD_VIEW_STATE: BoardViewState = {
   groupBy: "phaseLabel",
   filters: DEFAULT_BOARD_FILTERS,
   sortBy: "priority",
+  hiddenStatusIds: [],
+  collapsedStatusIds: [],
+  statusColumnPrefsCustomized: false,
 };
 
 /** Swimlane row when groupBy !== "none". */

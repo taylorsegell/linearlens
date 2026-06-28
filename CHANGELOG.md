@@ -8,6 +8,8 @@ All notable changes to the "linear-connect" extension will be documented in this
 - Board webview UI polish: theme-aware `--ll-*` design tokens, restyled filter chips, segmented Kanban/List toggle, denser issue cards and list rows aligned with Linear design language (VS Code theme variables preserved).
 
 ### Added
+- Issue detail sidebar: edit status, priority, assignee, and labels inline
+- Issue detail: click sub-issues to open them in a new tab
 - Task Detail panel — click an issue in the Linear sidebar to open an in-IDE detail tab
 - Edit issue title, description, status, and priority from the panel
 - Add comments from the panel

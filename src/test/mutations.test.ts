@@ -26,6 +26,24 @@ describe("buildIssueUpdateInput", () => {
       "Issue patch cannot be empty"
     );
   });
+
+  it("maps assigneeId null to clear assignee", () => {
+    expect(
+      buildIssueUpdateInput("id-1", { assigneeId: null })
+    ).toEqual({
+      id: "id-1",
+      input: { assigneeId: null },
+    });
+  });
+
+  it("maps labelIds", () => {
+    expect(
+      buildIssueUpdateInput("id-1", { labelIds: ["l1", "l2"] })
+    ).toEqual({
+      id: "id-1",
+      input: { labelIds: ["l1", "l2"] },
+    });
+  });
 });
 
 describe("buildCommentCreateInput", () => {

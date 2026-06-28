@@ -21,6 +21,7 @@ import { LinearService } from "../linear/linearClient";
 import {
   groupIssuesByState,
   issueStateIcon,
+  projectIcon,
   statusGroupIcon,
 } from "../linear/stateColors";
 import type {
@@ -89,10 +90,6 @@ type SectionCacheEntry =
         | LinearInitiativeSummary[]
         | LinearReviewSummary[];
     };
-
-function projectIcon(): vscode.ThemeIcon {
-  return new vscode.ThemeIcon("project");
-}
 
 function initiativeIcon(): vscode.ThemeIcon {
   return new vscode.ThemeIcon("rocket");
@@ -446,7 +443,13 @@ function mapIssueItems(
     item.command = {
       command: CMD_OPEN_ISSUE,
       title: "Open Issue",
-      arguments: [issue.id, `${issue.identifier}: ${issue.title}`, issue.url],
+      arguments: [
+        issue.id,
+        `${issue.identifier}: ${issue.title}`,
+        issue.url,
+        issue.stateType,
+        issue.state,
+      ],
     };
     item.contextValue = "linearIssue";
     item.description = parts.join(" · ");

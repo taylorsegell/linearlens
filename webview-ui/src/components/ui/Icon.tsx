@@ -3,6 +3,7 @@ import viewListIcon from "../../assets/icons/view-list.svg?raw";
 import filtersIcon from "../../assets/icons/filters.svg?raw";
 import plusIcon from "../../assets/icons/plus.svg?raw";
 import chevronDownIcon from "../../assets/icons/chevron-down.svg?raw";
+import chevronLeftIcon from "../../assets/icons/chevron-left.svg?raw";
 
 const ICONS = {
   board: boardIcon,
@@ -10,6 +11,7 @@ const ICONS = {
   filters: filtersIcon,
   plus: plusIcon,
   "chevron-down": chevronDownIcon,
+  "chevron-left": chevronLeftIcon,
 } as const;
 
 export type IconName = keyof typeof ICONS;

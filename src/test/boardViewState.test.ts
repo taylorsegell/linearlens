@@ -36,4 +36,20 @@ describe("boardViewState", () => {
     await saveBoardViewState(memento, "proj-1", custom);
     expect(loadBoardViewState(memento, "proj-1")).toEqual(custom);
   });
+
+  it("merges defaults for stored state missing column layout fields", () => {
+    const memento = {
+      get: () => ({
+        view: "kanban" as const,
+        groupBy: "phaseLabel" as const,
+        filters: DEFAULT_BOARD_VIEW_STATE.filters,
+        sortBy: "priority" as const,
+      }),
+      update: async () => undefined,
+      keys: () => [],
+    };
+    expect(loadBoardViewState(memento, "proj-1")).toEqual(
+      DEFAULT_BOARD_VIEW_STATE
+    );
+  });
 });

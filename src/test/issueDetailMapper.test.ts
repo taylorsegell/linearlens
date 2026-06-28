@@ -24,6 +24,7 @@ describe("mapIssueDetail", () => {
           identifier: "ABO-43",
           title: "Sub task",
           state: "Todo",
+          stateType: "unstarted",
           stateColor: "#ccc",
         },
       ],

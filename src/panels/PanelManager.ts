@@ -1,5 +1,8 @@
 import * as vscode from "vscode";
 import type { LinearService } from "../linear/linearClient";
+import {
+  projectIcon,
+} from "../linear/stateColors";
 import { IssueDetailPanel } from "./IssueDetailPanel";
 import { KanbanBoardPanel } from "./KanbanBoardPanel";
 
@@ -19,7 +22,11 @@ export class PanelManager implements vscode.Disposable {
     private readonly onIssueUpdated: (issueId: string) => void
   ) {}
 
-  openIssue(issueId: string, tabLabel: string): void {
+  openIssue(
+    issueId: string,
+    tabLabel: string,
+    initialState?: { type: string; name: string }
+  ): void {
     const key = panelKey("issue", issueId);
     const existing = this.panels.get(key);
     if (existing && existing instanceof IssueDetailPanel) {
@@ -32,6 +39,8 @@ export class PanelManager implements vscode.Disposable {
       this.getService,
       issueId,
       tabLabel,
+      initialState,
+      (childId, label, state) => this.openIssue(childId, label, state),
       (updatedIssueId) => this.onIssueUpdated(updatedIssueId),
       () => this.panels.delete(key)
     );
@@ -52,7 +61,8 @@ export class PanelManager implements vscode.Disposable {
       this.workspaceState,
       projectId,
       tabLabel,
-      (issueId, label) => this.openIssue(issueId, label),
+      projectIcon(),
+      (issueId, label, state) => this.openIssue(issueId, label, state),
       (issueId) => this.onIssueUpdated(issueId),
       () => this.panels.delete(key)
     );

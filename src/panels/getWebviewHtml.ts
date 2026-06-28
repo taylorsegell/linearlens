@@ -40,8 +40,10 @@ export function getWebviewHtml(
     `script-src 'nonce-${nonce}'`,
   ].join("; ");
 
+  const themeKind = bootstrap.themeKind ?? "dark";
+
   return `<!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="${themeKind}">
 <head>
   <meta charset="UTF-8" />
   <meta http-equiv="Content-Security-Policy" content="${csp}" />

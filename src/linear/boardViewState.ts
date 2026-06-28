@@ -1,5 +1,6 @@
 import type * as vscode from "vscode";
 import {
+  DEFAULT_BOARD_FILTERS,
   DEFAULT_BOARD_VIEW_STATE,
   type BoardViewState,
 } from "./types";
@@ -12,12 +13,25 @@ export function loadBoardViewState(
   workspaceState: vscode.Memento,
   projectId: string
 ): BoardViewState {
-  return (
-    workspaceState.get<BoardViewState>(boardViewStateKey(projectId)) ?? {
+  const stored = workspaceState.get<BoardViewState>(
+    boardViewStateKey(projectId)
+  );
+  if (!stored) {
+    return {
       ...DEFAULT_BOARD_VIEW_STATE,
       filters: { ...DEFAULT_BOARD_VIEW_STATE.filters },
-    }
-  );
+    };
+  }
+  return {
+    ...DEFAULT_BOARD_VIEW_STATE,
+    ...stored,
+    filters: { ...DEFAULT_BOARD_FILTERS, ...stored.filters },
+    hiddenStatusIds: stored.hiddenStatusIds ?? [],
+    collapsedStatusIds: stored.collapsedStatusIds ?? [],
+    statusColumnPrefsCustomized:
+      stored.statusColumnPrefsCustomized ??
+      (stored.hiddenStatusIds?.length ?? 0) > 0,
+  };
 }
 
 export async function saveBoardViewState(

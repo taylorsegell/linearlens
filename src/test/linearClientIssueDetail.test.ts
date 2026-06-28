@@ -32,6 +32,7 @@ function makeIssueMock() {
           title: "Child",
           state: Promise.resolve({
             name: "Todo",
+            type: "unstarted",
             color: "#cccccc",
           }),
         },
@@ -70,6 +71,7 @@ describe("LinearService issue detail", () => {
     expect(detail.identifier).toBe("ABO-1");
     expect(detail.labels[0].name).toBe("phase-1");
     expect(detail.subIssues[0].identifier).toBe("ABO-2");
+    expect(detail.subIssues[0].stateType).toBe("unstarted");
     expect(detail.comments[0].body).toBe("Nice");
   });
 });

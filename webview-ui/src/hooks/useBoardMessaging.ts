@@ -36,6 +36,9 @@ export interface BoardViewState {
   groupBy: "none" | "phaseLabel" | "assignee";
   filters: BoardFilters;
   sortBy: "priority" | "updatedAt" | "createdAt" | "identifier";
+  hiddenStatusIds: string[];
+  collapsedStatusIds: string[];
+  statusColumnPrefsCustomized: boolean;
 }
 
 type ExtensionMessage =

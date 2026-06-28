@@ -67,10 +67,22 @@ function stateTypeIconId(stateType: string, stateName: string): string {
   return "circle-outline";
 }
 
+export function workflowStateIcon(state: {
+  name: string;
+  type: string;
+}): vscode.ThemeIcon {
+  return new vscode.ThemeIcon(
+    stateTypeIconId(state.type, state.name),
+    stateThemeColor(state.type, state.name)
+  );
+}
+
 export function issueStateIcon(issue: LinearIssueSummary): vscode.ThemeIcon {
-  const iconId = stateTypeIconId(issue.stateType, issue.state);
-  const color = stateThemeColor(issue.stateType, issue.state);
-  return new vscode.ThemeIcon(iconId, color);
+  return workflowStateIcon({ name: issue.state, type: issue.stateType });
+}
+
+export function projectIcon(): vscode.ThemeIcon {
+  return new vscode.ThemeIcon("project");
 }
 
 export function statusGroupIcon(

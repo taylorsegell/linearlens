@@ -2,11 +2,14 @@ import * as vscode from "vscode";
 import * as crypto from "node:crypto";
 import type { LinearService } from "../linear/linearClient";
 import { IssueDetailCache } from "../linear/issueCache";
+import { workflowStateIcon } from "../linear/stateColors";
+import type { LinearIssueDetail } from "../linear/types";
 import { getWebviewHtml } from "./getWebviewHtml";
 import {
   isWebviewRequest,
   type ExtensionMessage,
 } from "../webview/messaging";
+import { getThemeKind, wireWebviewTheme } from "../webview/themeKind";
 
 const cache = new IssueDetailCache();
 
@@ -18,10 +21,16 @@ export class IssueDetailPanel implements vscode.Disposable {
     private readonly panel: vscode.WebviewPanel,
     private readonly getService: () => LinearService,
     private readonly issueId: string,
+    private readonly onOpenIssue: (
+      issueId: string,
+      label: string,
+      initialState?: { type: string; name: string }
+    ) => void,
     private readonly onIssueUpdated: (issueId: string) => void,
     private readonly onDisposeCallback: () => void
   ) {
     this.panel.onDidDispose(() => this.dispose(), null, this.disposables);
+    wireWebviewTheme(this.panel.webview, this.disposables);
     this.panel.webview.onDidReceiveMessage(
       (msg) => void this.handleMessage(msg),
       null,
@@ -35,6 +44,12 @@ export class IssueDetailPanel implements vscode.Disposable {
     getService: () => LinearService,
     issueId: string,
     tabLabel: string,
+    initialState: { type: string; name: string } | undefined,
+    onOpenIssue: (
+      issueId: string,
+      label: string,
+      initialState?: { type: string; name: string }
+    ) => void,
     onIssueUpdated: (issueId: string) => void,
     onDispose: () => void
   ): IssueDetailPanel {
@@ -51,18 +66,23 @@ export class IssueDetailPanel implements vscode.Disposable {
       }
     );
 
+    panel.iconPath = initialState
+      ? workflowStateIcon({ name: initialState.name, type: initialState.type })
+      : new vscode.ThemeIcon("issue-open");
+
     const nonce = crypto.randomBytes(16).toString("hex");
     panel.webview.html = getWebviewHtml(
       panel.webview,
       extensionUri,
       nonce,
-      { panel: "issue", issueId }
+      { panel: "issue", issueId, themeKind: getThemeKind() }
     );
 
     return new IssueDetailPanel(
       panel,
       getService,
       issueId,
+      onOpenIssue,
       onIssueUpdated,
       onDispose
     );
@@ -70,6 +90,10 @@ export class IssueDetailPanel implements vscode.Disposable {
 
   reveal(): void {
     this.panel.reveal();
+  }
+
+  private setIssueIcon(issue: LinearIssueDetail): void {
+    this.panel.iconPath = workflowStateIcon(issue.state);
   }
 
   private post(message: ExtensionMessage): void {
@@ -87,11 +111,20 @@ export class IssueDetailPanel implements vscode.Disposable {
       const issue = await cache.getOrFetch(this.issueId, () =>
         service.fetchIssueDetail(this.issueId)
       );
-      const workflowStates = await service.fetchTeamWorkflowStates(
-        issue.teamId
-      );
-      this.post({ type: "issueLoaded", issue, workflowStates });
+      const [workflowStates, teamMembers, teamLabels] = await Promise.all([
+        service.fetchTeamWorkflowStates(issue.teamId),
+        service.fetchTeamMembers(issue.teamId),
+        service.fetchTeamLabels(issue.teamId),
+      ]);
+      this.post({
+        type: "issueLoaded",
+        issue,
+        workflowStates,
+        teamMembers,
+        teamLabels,
+      });
       this.panel.title = `${issue.identifier}`;
+      this.setIssueIcon(issue);
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Failed to load issue.";
@@ -128,11 +161,22 @@ export class IssueDetailPanel implements vscode.Disposable {
         await vscode.env.openExternal(vscode.Uri.parse(raw.url));
         return;
 
+      case "openIssue":
+        this.onOpenIssue(
+          raw.issueId,
+          raw.label,
+          raw.stateType && raw.stateName
+            ? { type: raw.stateType, name: raw.stateName }
+            : undefined
+        );
+        return;
+
       case "updateIssue":
         this.enqueueMutation(async () => {
           try {
             const issue = await service.updateIssue(raw.issueId, raw.patch);
             cache.set(issue);
+            this.setIssueIcon(issue);
             this.post({ type: "issueUpdated", issue });
             this.onIssueUpdated(issue.id);
           } catch (error) {

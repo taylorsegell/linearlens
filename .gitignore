@@ -6,3 +6,5 @@ node_modules
 .cursor/
 .superpowers/
 *.backup
+docs/**
+docs/*.md

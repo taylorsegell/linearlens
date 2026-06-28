@@ -24,6 +24,8 @@ import type {
   LinearProjectSummary,
   LinearReviewSummary,
   LinearWorkflowState,
+  TeamLabelOption,
+  TeamMemberOption,
 } from "./types";
 import type { LinearSectionId } from "../config";
 import type { IssuePatch } from "../webview/messaging";
@@ -283,6 +285,7 @@ export class LinearService {
           identifier: child.identifier,
           title: child.title,
           state: childState?.name ?? "Unknown",
+          stateType: childState?.type ?? "unstarted",
           stateColor: childState?.color ?? "#bec2c8",
         };
       })
@@ -356,6 +359,33 @@ export class LinearService {
       name: state.name,
       type: state.type,
       color: state.color,
+    }));
+  }
+
+  async fetchTeamMembers(teamId: string): Promise<TeamMemberOption[]> {
+    if (!this.client) {
+      throw new Error("Linear API key is not configured.");
+    }
+
+    const team = await this.client.team(teamId);
+    const connection = await team.members({ first: 100 });
+    return connection.nodes.map((user) => ({
+      id: user.id,
+      name: user.displayName ?? user.name,
+    }));
+  }
+
+  async fetchTeamLabels(teamId: string): Promise<TeamLabelOption[]> {
+    if (!this.client) {
+      throw new Error("Linear API key is not configured.");
+    }
+
+    const team = await this.client.team(teamId);
+    const connection = await team.labels({ first: 100 });
+    return connection.nodes.map((label) => ({
+      id: label.id,
+      name: label.name,
+      color: label.color,
     }));
   }
 

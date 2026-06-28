@@ -18,6 +18,12 @@ export function buildIssueUpdateInput(
   if (patch.stateId !== undefined) {
     input.stateId = patch.stateId;
   }
+  if (patch.assigneeId !== undefined) {
+    input.assigneeId = patch.assigneeId;
+  }
+  if (patch.labelIds !== undefined) {
+    input.labelIds = patch.labelIds;
+  }
 
   if (Object.keys(input).length === 0) {
     throw new Error("Issue patch cannot be empty");

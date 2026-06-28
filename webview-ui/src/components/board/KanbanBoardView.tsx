@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
   DndContext,
   DragOverlay,
@@ -15,19 +15,48 @@ import { CSS } from "@dnd-kit/utilities";
 import { FixedSizeList } from "react-window";
 import { groupIssuesIntoSwimlanes } from "../../boardLogic";
 import type { BoardIssueCard } from "../../hooks/useBoardMessaging";
+import { Icon } from "../ui/Icon";
 import { IssueCard } from "./IssueCard";
 
 const PHASE_PREFIX = "phase-";
-const CARD_HEIGHT = 88;
+const CARD_HEIGHT = 92;
 const COLUMN_WIDTH = 280;
-const COLUMN_HEIGHT = 480;
+const COLLAPSED_COLUMN_WIDTH = 40;
+
+type WorkflowState = { id: string; name: string; color: string };
 
 interface KanbanBoardViewProps {
   issues: BoardIssueCard[];
-  workflowStates: { id: string; name: string; color: string }[];
+  workflowStates: WorkflowState[];
+  hiddenStatusIds: string[];
+  collapsedStatusIds: string[];
   groupBy: "none" | "phaseLabel" | "assignee";
   onMoveIssue: (issueId: string, stateId: string) => void;
   onOpenIssue: (issue: BoardIssueCard) => void;
+  onCollapseColumn: (stateId: string) => void;
+  onExpandColumn: (stateId: string) => void;
+}
+
+function useElementHeight<T extends HTMLElement>() {
+  const ref = useRef<T>(null);
+  const [height, setHeight] = useState(0);
+
+  useEffect(() => {
+    const element = ref.current;
+    if (!element) {
+      return;
+    }
+
+    const observer = new ResizeObserver((entries) => {
+      const nextHeight = Math.floor(entries[0]?.contentRect.height ?? 0);
+      setHeight((current) => (current === nextHeight ? current : nextHeight));
+    });
+
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
+
+  return { ref, height };
 }
 
 function DraggableCard({
@@ -41,7 +70,10 @@ function DraggableCard({
     useDraggable({ id: issue.id });
 
   const style = transform
-    ? { transform: CSS.Translate.toString(transform), opacity: isDragging ? 0.5 : 1 }
+    ? {
+        transform: CSS.Translate.toString(transform),
+        opacity: isDragging ? 0.5 : 1,
+      }
     : undefined;
 
   return (
@@ -59,9 +91,11 @@ function DraggableCard({
 
 function DroppableColumn({
   stateId,
+  className,
   children,
 }: {
   stateId: string;
+  className?: string;
   children: ReactNode;
 }) {
   const { setNodeRef, isOver } = useDroppable({ id: `column:${stateId}` });
@@ -69,21 +103,153 @@ function DroppableColumn({
   return (
     <div
       ref={setNodeRef}
-      className={`kanban-column${isOver ? " kanban-column-over" : ""}`}
+      className={`kanban-column${isOver ? " kanban-column-over" : ""}${
+        className ? ` ${className}` : ""
+      }`}
     >
       {children}
     </div>
   );
 }
 
+function ColumnIssueList({
+  issues,
+  onOpenIssue,
+}: {
+  issues: BoardIssueCard[];
+  onOpenIssue: (issue: BoardIssueCard) => void;
+}) {
+  const { ref, height } = useElementHeight<HTMLDivElement>();
+
+  return (
+    <div ref={ref} className="kanban-column-body">
+      {height > 0 &&
+        (issues.length === 0 ? (
+          <p className="kanban-column-empty">No issues</p>
+        ) : (
+          <FixedSizeList
+            height={height}
+            width={COLUMN_WIDTH}
+            itemCount={issues.length}
+            itemSize={CARD_HEIGHT}
+          >
+            {({ index, style }) => {
+              const issue = issues[index];
+              return (
+                <div style={style}>
+                  <DraggableCard
+                    issue={issue}
+                    onOpen={() => onOpenIssue(issue)}
+                  />
+                </div>
+              );
+            }}
+          </FixedSizeList>
+        ))}
+    </div>
+  );
+}
+
+function CollapsedColumnRail({
+  state,
+  count,
+  onExpand,
+}: {
+  state: WorkflowState;
+  count: number;
+  onExpand: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      className="kanban-column-collapsed"
+      aria-label={`Expand ${state.name} column (${count})`}
+      onClick={onExpand}
+    >
+      <span
+        className="column-status-dot"
+        style={{ backgroundColor: state.color }}
+        aria-hidden
+      />
+      <span className="kanban-column-collapsed-label">{state.name}</span>
+      <span className="column-count">{count}</span>
+    </button>
+  );
+}
+
+function ExpandedColumn({
+  state,
+  issues,
+  onCollapseColumn,
+  onOpenIssue,
+}: {
+  state: WorkflowState;
+  issues: BoardIssueCard[];
+  onCollapseColumn: (stateId: string) => void;
+  onOpenIssue: (issue: BoardIssueCard) => void;
+}) {
+  return (
+    <DroppableColumn stateId={state.id}>
+      <header
+        className="column-header"
+        style={{ borderTopColor: state.color }}
+      >
+        <div className="column-header-main">
+          <span
+            className="column-status-dot"
+            style={{ backgroundColor: state.color }}
+            aria-hidden
+          />
+          <span className="column-title">{state.name}</span>
+          <span className="column-count">{issues.length}</span>
+        </div>
+        <button
+          type="button"
+          className="column-collapse-btn"
+          aria-label={`Collapse ${state.name} column`}
+          onClick={() => onCollapseColumn(state.id)}
+        >
+          <Icon name="chevron-left" size={14} />
+        </button>
+      </header>
+      <ColumnIssueList issues={issues} onOpenIssue={onOpenIssue} />
+    </DroppableColumn>
+  );
+}
+
+function partitionWorkflowStates(
+  workflowStates: WorkflowState[],
+  hiddenStatusIds: string[],
+  collapsedStatusIds: string[]
+) {
+  const visible = workflowStates.filter(
+    (state) => !hiddenStatusIds.includes(state.id)
+  );
+  return {
+    collapsed: visible.filter((state) => collapsedStatusIds.includes(state.id)),
+    expanded: visible.filter(
+      (state) => !collapsedStatusIds.includes(state.id)
+    ),
+  };
+}
+
 export function KanbanBoardView({
   issues,
   workflowStates,
+  hiddenStatusIds,
+  collapsedStatusIds,
   groupBy,
   onMoveIssue,
   onOpenIssue,
+  onCollapseColumn,
+  onExpandColumn,
 }: KanbanBoardViewProps) {
   const lanes = groupIssuesIntoSwimlanes(issues, groupBy, PHASE_PREFIX);
+  const { collapsed, expanded } = partitionWorkflowStates(
+    workflowStates,
+    hiddenStatusIds,
+    collapsedStatusIds
+  );
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } })
   );
@@ -119,40 +285,31 @@ export function KanbanBoardView({
               <h3 className="swimlane-title">{lane.label}</h3>
             )}
             <div className="kanban-columns">
-              {workflowStates.map((state) => {
+              {collapsed.map((state) => {
                 const columnIssues = lane.issues.filter(
-                  (i) => i.state.id === state.id
+                  (issue) => issue.state.id === state.id
                 );
                 return (
-                  <DroppableColumn key={state.id} stateId={state.id}>
-                    <header
-                      className="column-header"
-                      style={{ borderTopColor: state.color }}
-                    >
-                      {state.name}
-                      <span className="column-count">
-                        {columnIssues.length}
-                      </span>
-                    </header>
-                    <FixedSizeList
-                      height={COLUMN_HEIGHT}
-                      width={COLUMN_WIDTH}
-                      itemCount={columnIssues.length}
-                      itemSize={CARD_HEIGHT}
-                    >
-                      {({ index, style }) => {
-                        const issue = columnIssues[index];
-                        return (
-                          <div style={style}>
-                            <DraggableCard
-                              issue={issue}
-                              onOpen={() => onOpenIssue(issue)}
-                            />
-                          </div>
-                        );
-                      }}
-                    </FixedSizeList>
-                  </DroppableColumn>
+                  <CollapsedColumnRail
+                    key={state.id}
+                    state={state}
+                    count={columnIssues.length}
+                    onExpand={() => onExpandColumn(state.id)}
+                  />
+                );
+              })}
+              {expanded.map((state) => {
+                const columnIssues = lane.issues.filter(
+                  (issue) => issue.state.id === state.id
+                );
+                return (
+                  <ExpandedColumn
+                    key={state.id}
+                    state={state}
+                    issues={columnIssues}
+                    onCollapseColumn={onCollapseColumn}
+                    onOpenIssue={onOpenIssue}
+                  />
                 );
               })}
             </div>
@@ -167,3 +324,9 @@ export function KanbanBoardView({
     </DndContext>
   );
 }
+
+export {
+  CARD_HEIGHT,
+  COLLAPSED_COLUMN_WIDTH,
+  COLUMN_WIDTH,
+};

@@ -11,6 +11,7 @@ import {
   isWebviewRequest,
   type ExtensionMessage,
 } from "../webview/messaging";
+import { getThemeKind, wireWebviewTheme } from "../webview/themeKind";
 import type { LinearBoardIssueCard } from "../linear/types";
 
 const cache = new BoardCache();
@@ -24,11 +25,16 @@ export class KanbanBoardPanel implements vscode.Disposable {
     private readonly getService: () => LinearService,
     private readonly workspaceState: vscode.Memento,
     private readonly projectId: string,
-    private readonly onOpenIssue: (issueId: string, label: string) => void,
+    private readonly onOpenIssue: (
+      issueId: string,
+      label: string,
+      initialState?: { type: string; name: string }
+    ) => void,
     private readonly onIssueUpdated: (issueId: string) => void,
     private readonly onDisposeCallback: () => void
   ) {
     this.panel.onDidDispose(() => this.dispose(), null, this.disposables);
+    wireWebviewTheme(this.panel.webview, this.disposables);
     this.panel.webview.onDidReceiveMessage(
       (msg) => void this.handleMessage(msg),
       null,
@@ -43,7 +49,12 @@ export class KanbanBoardPanel implements vscode.Disposable {
     workspaceState: vscode.Memento,
     projectId: string,
     tabLabel: string,
-    onOpenIssue: (issueId: string, label: string) => void,
+    iconPath: vscode.ThemeIcon,
+    onOpenIssue: (
+      issueId: string,
+      label: string,
+      initialState?: { type: string; name: string }
+    ) => void,
     onIssueUpdated: (issueId: string) => void,
     onDispose: () => void
   ): KanbanBoardPanel {
@@ -60,12 +71,14 @@ export class KanbanBoardPanel implements vscode.Disposable {
       }
     );
 
+    panel.iconPath = iconPath;
+
     const nonce = crypto.randomBytes(16).toString("hex");
     panel.webview.html = getWebviewHtml(
       panel.webview,
       extensionUri,
       nonce,
-      { panel: "board", projectId }
+      { panel: "board", projectId, themeKind: getThemeKind() }
     );
 
     return new KanbanBoardPanel(
@@ -183,7 +196,13 @@ export class KanbanBoardPanel implements vscode.Disposable {
         return;
 
       case "openIssue":
-        this.onOpenIssue(raw.issueId, raw.label);
+        this.onOpenIssue(
+          raw.issueId,
+          raw.label,
+          raw.stateType && raw.stateName
+            ? { type: raw.stateType, name: raw.stateName }
+            : undefined
+        );
         return;
 
       case "openExternal":
