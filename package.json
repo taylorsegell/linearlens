@@ -96,6 +96,11 @@
         "icon": "$(link-external)"
       },
       {
+        "command": "linear.openProject",
+        "title": "Linear: Open Project",
+        "icon": "$(project)"
+      },
+      {
         "command": "linear.openProjectBoard",
         "title": "Linear: Open Project Board",
         "icon": "$(layout)"
@@ -153,6 +158,11 @@
         {
           "command": "linear.openIssueInBrowser",
           "when": "view == linear.sidebar && viewItem == linearIssue",
+          "group": "navigation"
+        },
+        {
+          "command": "linear.openProjectBoard",
+          "when": "view == linear.sidebar && viewItem == linearProject",
           "group": "navigation"
         },
         {

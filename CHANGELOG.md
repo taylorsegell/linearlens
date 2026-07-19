@@ -8,6 +8,7 @@ All notable changes to the "linear-connect" extension will be documented in this
 - Board webview UI polish: theme-aware `--ll-*` design tokens, restyled filter chips, segmented Kanban/List toggle, denser issue cards and list rows aligned with Linear design language (VS Code theme variables preserved).
 
 ### Added
+- Project Detail panel — primary-click a sidebar project to open overview, milestones, recent issues, and editable description; open board via context menu, command palette, or in-panel buttons
 - Issue detail sidebar: edit status, priority, assignee, and labels inline
 - Issue detail: click sub-issues to open them in a new tab
 - Task Detail panel — click an issue in the Linear sidebar to open an in-IDE detail tab
@@ -15,7 +16,7 @@ All notable changes to the "linear-connect" extension will be documented in this
 - Add comments from the panel
 - View sub-issues and labels inline
 - Context menu: Open Issue in Browser
-- Project Kanban board — open from sidebar project click or **Linear: Open Project Board** command
+- Project Kanban board — open via context menu, **Linear: Open Project Board**, or Project Detail in-panel buttons
 - List view toggle with sortable columns and inline status changes
 - Drag-and-drop status changes on Kanban cards (optimistic UI)
 - Board filters: status, label, assignee, and title search

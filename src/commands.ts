@@ -9,6 +9,7 @@ import {
   CMD_FILTER_ISSUES_STATUS,
   CMD_OPEN_ISSUE,
   CMD_OPEN_ISSUE_IN_BROWSER,
+  CMD_OPEN_PROJECT,
   CMD_OPEN_PROJECT_BOARD,
   CMD_OPEN_PROJECT_IN_BROWSER,
   CMD_OPEN_LINEAR,
@@ -240,7 +241,7 @@ export function registerLinearCommands(
     ),
 
     vscode.commands.registerCommand(
-      CMD_OPEN_PROJECT_BOARD,
+      CMD_OPEN_PROJECT,
       async (projectId?: string, label?: string) => {
         const service = ctx.getService();
         if (!service.isConfigured()) {
@@ -252,6 +253,65 @@ export function registerLinearCommands(
 
         let id = projectId;
         let tabLabel = label;
+        if (!id) {
+          const projects = ctx
+            .getTreeProvider()
+            .getCachedSection("projects") as
+            | import("./linear/types").LinearProjectSummary[]
+            | undefined;
+          if (!projects?.length) {
+            void vscode.window.showInformationMessage(
+              "No projects loaded. Refresh the Linear sidebar first."
+            );
+            return;
+          }
+          const pick = await vscode.window.showQuickPick(
+            projects.map((p) => ({
+              label: p.name,
+              description: `${p.state} · ${p.progress}%`,
+              projectId: p.id,
+            })),
+            { placeHolder: "Select a project" }
+          );
+          if (!pick) {
+            return;
+          }
+          id = pick.projectId;
+          tabLabel = pick.label;
+        }
+
+        ctx.getPanelManager().openProject(id!, tabLabel ?? "Project");
+      }
+    ),
+
+    vscode.commands.registerCommand(
+      CMD_OPEN_PROJECT_BOARD,
+      async (
+        projectIdOrItem?: string | LinearTreeItem,
+        label?: string
+      ) => {
+        const service = ctx.getService();
+        if (!service.isConfigured()) {
+          void vscode.window.showWarningMessage(
+            "Linear is not connected. Set your API key first."
+          );
+          return;
+        }
+
+        let id: string | undefined;
+        let tabLabel: string | undefined;
+        if (projectIdOrItem instanceof LinearTreeItem) {
+          id = projectIdOrItem.project?.id;
+          tabLabel =
+            projectIdOrItem.project?.name ??
+            (typeof projectIdOrItem.label === "string"
+              ? projectIdOrItem.label
+              : undefined);
+        } else {
+          id = projectIdOrItem;
+          tabLabel = label;
+        }
+
         if (!id) {
           const projects = ctx
             .getTreeProvider()
@@ -285,7 +345,17 @@ export function registerLinearCommands(
 
     vscode.commands.registerCommand(
       CMD_OPEN_PROJECT_IN_BROWSER,
-      (_projectId: string, _label: string, url?: string) => {
+      (
+        itemOrProjectId?: LinearTreeItem | string,
+        _label?: string,
+        url?: string
+      ) => {
+        if (itemOrProjectId instanceof LinearTreeItem && itemOrProjectId.url) {
+          void vscode.env.openExternal(
+            vscode.Uri.parse(itemOrProjectId.url)
+          );
+          return;
+        }
         if (url) {
           void vscode.env.openExternal(vscode.Uri.parse(url));
         }

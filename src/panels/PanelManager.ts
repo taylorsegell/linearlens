@@ -5,12 +5,19 @@ import {
 } from "../linear/stateColors";
 import { IssueDetailPanel } from "./IssueDetailPanel";
 import { KanbanBoardPanel } from "./KanbanBoardPanel";
+import { ProjectDetailPanel } from "./ProjectDetailPanel";
 
-export function panelKey(kind: "issue" | "board", id: string): string {
+export function panelKey(
+  kind: "issue" | "board" | "project",
+  id: string
+): string {
   return `${kind}:${id}`;
 }
 
-type ManagedPanel = IssueDetailPanel | KanbanBoardPanel;
+type ManagedPanel =
+  | IssueDetailPanel
+  | KanbanBoardPanel
+  | ProjectDetailPanel;
 
 export class PanelManager implements vscode.Disposable {
   private readonly panels = new Map<string, ManagedPanel>();
@@ -64,6 +71,26 @@ export class PanelManager implements vscode.Disposable {
       projectIcon(),
       (issueId, label, state) => this.openIssue(issueId, label, state),
       (issueId) => this.onIssueUpdated(issueId),
+      () => this.panels.delete(key)
+    );
+    this.panels.set(key, panel);
+  }
+
+  openProject(projectId: string, tabLabel: string): void {
+    const key = panelKey("project", projectId);
+    const existing = this.panels.get(key);
+    if (existing && existing instanceof ProjectDetailPanel) {
+      existing.reveal();
+      return;
+    }
+
+    const panel = ProjectDetailPanel.create(
+      this.extensionUri,
+      this.getService,
+      projectId,
+      tabLabel,
+      (childId, label, state) => this.openIssue(childId, label, state),
+      (id, label) => this.openBoard(id, label),
       () => this.panels.delete(key)
     );
     this.panels.set(key, panel);

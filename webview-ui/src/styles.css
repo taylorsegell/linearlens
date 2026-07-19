@@ -1072,3 +1072,91 @@ body,
   background: var(--ll-bg-elevated);
   color: var(--ll-text-primary);
 }
+
+/* —— Project Detail (reuse issue-detail where possible) —— */
+.project-detail-toolbar {
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+.project-detail-toolbar-main {
+  min-width: 0;
+  flex: 1;
+}
+.project-detail-name {
+  margin: 0;
+  font-size: var(--ll-font-headline);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: var(--ll-tracking-headline);
+  color: var(--ll-text-primary);
+}
+.project-detail-meta {
+  margin: 4px 0 0;
+  font-size: var(--ll-font-caption);
+  color: var(--ll-text-secondary);
+}
+.project-detail-toolbar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.project-detail-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 24px 32px;
+}
+.project-milestone-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.project-milestone-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 36px;
+  padding: 6px 8px;
+  border-radius: var(--ll-radius-xs);
+  font-size: var(--ll-font-caption);
+}
+.project-milestone-name {
+  color: var(--ll-text-primary);
+  font-weight: 500;
+}
+.project-milestone-meta {
+  color: var(--ll-text-secondary);
+  flex-shrink: 0;
+}
+.project-detail-dates {
+  padding: 0;
+}
+.project-recent-issue-row {
+  grid-template-columns: 72px minmax(0, 1fr) auto;
+}
+.project-detail-footer {
+  margin-top: 8px;
+  padding-top: 16px;
+  border-top: 1px solid var(--ll-border-subtle);
+}
+.project-detail-footer-link {
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--ll-text-link);
+  font: inherit;
+  font-size: var(--ll-font-body-sm);
+  font-weight: 500;
+  cursor: pointer;
+}
+.project-detail-footer-link:hover {
+  text-decoration: underline;
+}
+.project-detail-footer-link:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--ll-focus) 50%, transparent);
+  outline-offset: 2px;
+  border-radius: var(--ll-radius-xs);
+}
