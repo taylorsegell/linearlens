@@ -1,7 +1,7 @@
 export type ThemeKind = "light" | "dark" | "highContrast";
 
 export interface WebviewPanelBootstrap {
-  panel: "issue" | "board";
+  panel: "issue" | "board" | "project";
   issueId?: string;
   projectId?: string;
   themeKind?: ThemeKind;

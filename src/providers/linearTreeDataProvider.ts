@@ -5,7 +5,7 @@
 import * as vscode from "vscode";
 import {
   CMD_OPEN_ISSUE,
-  CMD_OPEN_PROJECT_BOARD,
+  CMD_OPEN_PROJECT,
   LINEAR_SECTIONS,
   type LinearSectionId,
 } from "../config";
@@ -46,6 +46,7 @@ export enum LinearTreeItemKind {
 
 export class LinearTreeItem extends vscode.TreeItem {
   issue?: LinearIssueSummary;
+  project?: LinearProjectSummary;
   review?: LinearReviewSummary;
   statusGroup?: {
     state: string;
@@ -489,12 +490,13 @@ function mapItems(
           tooltip
         );
         item.command = {
-          command: CMD_OPEN_PROJECT_BOARD,
-          title: "Open Project Board",
+          command: CMD_OPEN_PROJECT,
+          title: "Open Project",
           arguments: [project.id, project.name, project.url],
         };
         item.contextValue = "linearProject";
         item.description = `${project.state} · ${project.progress}%`;
+        item.project = project;
         return item;
       });
     case "initiatives":

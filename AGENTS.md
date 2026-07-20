@@ -1,14 +1,14 @@
 # AGENTS.md
 
-Context for AI agents and contributors working on **linear-connect** — the official Linear OAuth authentication provider for VS Code-compatible editors (VS Code, Cursor, etc.).
+Context for AI agents and contributors working on **Linear Lens** (`taylorsegell.linearlens`) — Linear sidebar + panels for VS Code-compatible editors (VS Code, Cursor, etc.).
 
 ## Rules
 
-- **Never rename** the auth provider id (`linear`) or secrets storage key (`linear.auth`).
-- **OAuth redirect URIs** are `${vscode.env.uriScheme}://linear.linear-connect/callback`. Both `vscode://` and `cursor://` must be registered on the Linear OAuth app for sign-in to work in each editor.
-- **Minimize diffs** — dependent extensions call `vscode.authentication.getSession("linear", scopes)`; behavior must stay stable across releases unless semver-major.
+- **Never rename** the auth provider id (`linearlens`) or secrets storage key (`linear.auth`) without an explicit migration task.
+- **OAuth** is deferred for a future release. Sidebar/panels use a Personal API key. When OAuth ships, redirect URIs will be `${vscode.env.uriScheme}://taylorsegell.linearlens/callback` and `OAUTH_CLIENT_ID` in `src/oauth/linearOAuth.ts` must match your Linear OAuth app.
+- **Minimize diffs** for auth/storage behavior when changing OAuth internals.
 - **Do not commit or push** unless the user explicitly asks.
-- **Verify before finishing:** `yarn typecheck && yarn test && yarn esbuild`.
+- **Verify before finishing:** `yarn typecheck && yarn test && yarn build`.
 
 ## Stack
 
@@ -17,8 +17,9 @@ Context for AI agents and contributors working on **linear-connect** — the off
 | Language | TypeScript (strict) |
 | Package manager | Yarn — see `yarn.lock` |
 | VS Code API | See `package.json` → `engines.vscode` |
-| Bundle | esbuild → `dist/main.js` (~16 KB) |
+| Bundle | esbuild → `dist/main.js`; Vite → `dist/webview/` |
 | Tests | Vitest — `src/test/` |
+| Marketplace | `taylorsegell.linearlens` |
 
 ## Project structure
 
@@ -67,33 +68,27 @@ Legacy v1 sessions without `refreshToken` fail validation and are cleared — us
 
 ## Local development
 
-1. `yarn install && yarn esbuild`
+1. `yarn install && yarn build`
 2. Open repo in VS Code or Cursor (engine version in `package.json`).
 3. Launch **Run Extension** (F5) — opens Extension Development Host with dev build.
-4. Sign in:
-   - **Accounts** menu → **Linear** → Sign in, or
-   - Debug Console in dev host:
-     ```javascript
-     await vscode.authentication.getSession("linear", ["read"], { createIfNone: true })
-     ```
-5. Logout: **Linear: Logout all Linear API sessions** (command palette).
+4. Connect with **Linear: Set API Key** (OAuth Accounts sign-in is deferred for a later release).
+5. Logout OAuth sessions (when configured): **Linear Lens: Logout all Linear API sessions**.
 
-**Cursor:** expect `vscode.env.uriScheme === "cursor"`. Add `cursor://linear.linear-connect/callback` to the Linear OAuth app if redirect fails.
-
-If F5 preLaunch fails, run `yarn esbuild` manually first.
+If F5 preLaunch fails, run `yarn build` manually first.
 
 ## Contributing
 
 1. Branch from `main` (`feat/…`, `fix/…`, `chore/…`).
-2. Add or update tests in `src/test/` for changes under `src/oauth/`.
-3. Run `yarn typecheck && yarn test && yarn esbuild`.
+2. Add or update tests in `src/test/` for changes under `src/oauth/` or `src/linear/`.
+3. Run `yarn typecheck && yarn test && yarn build`.
 4. Update `CHANGELOG.md` for user-visible changes.
 5. Open a PR — CI must pass.
 
-**Release:** bump semver in `package.json`, update `CHANGELOG.md`, `yarn esbuild`, `vsce package`, publish from Linear publisher account.
+**Release:** bump semver in `package.json`, update `CHANGELOG.md`, `yarn package` (runs `vscode:prepublish` = minify host + build webview), publish as `taylorsegell` from your Marketplace publisher account.
 
 ## Boundaries
 
-- Do not change provider id, secret key, or OAuth client credentials without an explicit PKCE migration task.
+- Do not change provider id (`linearlens`), secret key (`linear.auth`), or OAuth client credentials without an explicit migration task.
+- OAuth Accounts flow is deferred until a Linear OAuth app is configured.
 - Multi-account (`supportsMultipleAccounts`) and l10n are deferred — do not add unless requested.
 - `docs/superpowers/plans/` is dev planning only; excluded from `.vsix` via `.vscodeignore`.

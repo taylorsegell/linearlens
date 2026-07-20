@@ -1,12 +1,26 @@
+# Bundled runtime only — keep VSIX small and free of source/dev artifacts.
 .vscode/**
 .vscode-test/**
+.cursor/**
+.superpowers/**
+.github/**
 docs/**
 out/
 src/
-node_modules
+webview-ui/
+node_modules/**
 .gitignore
 .yarnrc
 **/tsconfig.json
 **/.eslintrc.json
 **/*.map
 **/*.ts
+**/*.tsx
+**/*.vsix
+DESIGN.md
+AGENTS.md
+CLAUDE.md
+README.md.backup
+vite.webview.config.ts
+vitest.config.ts
+yarn.lock

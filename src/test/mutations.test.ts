@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import {
   buildCommentCreateInput,
   buildIssueUpdateInput,
+  buildProjectUpdateInput,
 } from "../linear/mutations";
 
 describe("buildIssueUpdateInput", () => {
@@ -57,6 +58,23 @@ describe("buildCommentCreateInput", () => {
   it("throws on empty body", () => {
     expect(() => buildCommentCreateInput("id-1", "   ")).toThrow(
       "Comment body is required"
+    );
+  });
+});
+
+describe("buildProjectUpdateInput", () => {
+  it("maps description", () => {
+    expect(
+      buildProjectUpdateInput("p1", { description: "Updated" })
+    ).toEqual({
+      id: "p1",
+      input: { description: "Updated" },
+    });
+  });
+
+  it("throws on empty patch", () => {
+    expect(() => buildProjectUpdateInput("p1", {})).toThrow(
+      "Project patch cannot be empty"
     );
   });
 });

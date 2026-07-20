@@ -7,12 +7,16 @@ import {
   LinearClient,
   LinearError,
   NotificationCategory,
+  PaginationOrderBy,
 } from "@linear/sdk";
 import { mapIssueDetail } from "./issueDetailMapper";
 import { mapBoardIssue } from "./boardIssueMapper";
+import { mapProjectDetail } from "./projectDetailMapper";
 import {
   buildCommentCreateInput,
   buildIssueUpdateInput,
+  buildProjectUpdateInput,
+  type ProjectPatch,
 } from "./mutations";
 import type {
   BoardIssuesPage,
@@ -21,6 +25,7 @@ import type {
   LinearIssueDetail,
   LinearIssueSummary,
   LinearProjectBoardMeta,
+  LinearProjectDetail,
   LinearProjectSummary,
   LinearReviewSummary,
   LinearWorkflowState,
@@ -472,6 +477,77 @@ export class LinearService {
         ? { id: projectMilestone.id, name: projectMilestone.name }
         : undefined,
     });
+  }
+
+  async fetchProjectDetail(projectId: string): Promise<LinearProjectDetail> {
+    if (!this.client) {
+      throw new Error("Linear API key is not configured.");
+    }
+
+    const project = await this.client.project(projectId);
+    const [status, lead, milestonesConnection, issuesConnection] =
+      await Promise.all([
+        project.status,
+        project.lead,
+        project.projectMilestones({ first: 50 }),
+        project.issues({
+          first: 10,
+          orderBy: PaginationOrderBy.UpdatedAt,
+        }),
+      ]);
+
+    const recentIssues = await Promise.all(
+      issuesConnection.nodes.map(async (issue) => {
+        const issueState = await issue.state;
+        return {
+          id: issue.id,
+          identifier: issue.identifier,
+          title: issue.title,
+          state: issueState?.name ?? "Unknown",
+          stateType: issueState?.type,
+          stateName: issueState?.name,
+          url: issue.url,
+        };
+      })
+    );
+
+    return mapProjectDetail({
+      id: project.id,
+      name: project.name,
+      description: project.description ?? undefined,
+      state: status?.name ?? "Unknown",
+      // Pass raw SDK progress (0–1); mapper converts to percent.
+      progress: project.progress ?? 0,
+      lead: lead?.displayName ?? lead?.name,
+      url: project.url,
+      startDate:
+        project.startDate?.toString?.() ?? project.startDate ?? undefined,
+      targetDate:
+        project.targetDate?.toString?.() ?? project.targetDate ?? undefined,
+      milestones: milestonesConnection.nodes.map((m) => ({
+        id: m.id,
+        name: m.name,
+        progress: m.progress ?? 0,
+        status: m.status,
+      })),
+      recentIssues,
+    });
+  }
+
+  async updateProject(
+    projectId: string,
+    patch: ProjectPatch
+  ): Promise<LinearProjectDetail> {
+    if (!this.client) {
+      throw new Error("Linear API key is not configured.");
+    }
+
+    const { id, input } = buildProjectUpdateInput(projectId, patch);
+    const result = await this.client.updateProject(id, input);
+    if (!result.success) {
+      throw new Error("Failed to update project.");
+    }
+    return this.fetchProjectDetail(projectId);
   }
 
   async fetchProjectBoardMeta(

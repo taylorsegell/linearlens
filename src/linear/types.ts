@@ -24,6 +24,40 @@ export interface LinearProjectSummary {
   url: string;
 }
 
+/** Milestone row on Project Detail. */
+export interface LinearProjectMilestoneSummary {
+  id: string;
+  name: string;
+  progress: number;
+  status?: string;
+}
+
+/** Recent issue row on Project Detail. */
+export interface LinearProjectRecentIssue {
+  id: string;
+  identifier: string;
+  title: string;
+  state: string;
+  stateType?: string;
+  stateName?: string;
+  url: string;
+}
+
+/** Full project payload for Project Detail panel. */
+export interface LinearProjectDetail {
+  id: string;
+  name: string;
+  description?: string;
+  state: string;
+  progress: number;
+  lead?: string;
+  url: string;
+  startDate?: string;
+  targetDate?: string;
+  milestones: LinearProjectMilestoneSummary[];
+  recentIssues: LinearProjectRecentIssue[];
+}
+
 /** Normalized initiative row for the sidebar tree. */
 export interface LinearInitiativeSummary {
   id: string;

@@ -41,4 +41,28 @@ describe("isWebviewRequest", () => {
     };
     expect(isWebviewRequest(msg)).toBe(true);
   });
+
+  it("accepts refreshProject and updateProject", () => {
+    expect(
+      isWebviewRequest({ type: "refreshProject", projectId: "p1" })
+    ).toBe(true);
+    expect(
+      isWebviewRequest({
+        type: "updateProject",
+        projectId: "p1",
+        patch: { description: "Hi" },
+      })
+    ).toBe(true);
+  });
+
+  it("accepts openBoard from project panel", () => {
+    expect(
+      isWebviewRequest({
+        type: "openBoard",
+        projectId: "p1",
+        label: "Abodi",
+        view: "list",
+      })
+    ).toBe(true);
+  });
 });

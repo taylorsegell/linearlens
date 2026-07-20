@@ -42,3 +42,19 @@ export function buildCommentCreateInput(
   }
   return { issueId, body: trimmed };
 }
+
+export type ProjectPatch = { description?: string };
+
+export function buildProjectUpdateInput(
+  projectId: string,
+  patch: ProjectPatch
+): { id: string; input: Record<string, unknown> } {
+  const input: Record<string, unknown> = {};
+  if (patch.description !== undefined) {
+    input.description = patch.description;
+  }
+  if (Object.keys(input).length === 0) {
+    throw new Error("Project patch cannot be empty");
+  }
+  return { id: projectId, input };
+}

@@ -2,6 +2,7 @@ import type {
   LinearBoardIssueCard,
   LinearIssueDetail,
   LinearProjectBoardMeta,
+  LinearProjectDetail,
   BoardIssuesPage,
   BoardViewState,
   TeamLabelOption,
@@ -38,7 +39,19 @@ export type WebviewRequest =
     }
   | { type: "loadBoardPage"; projectId: string; cursor?: string }
   | { type: "saveBoardViewState"; projectId: string; viewState: BoardViewState }
-  | { type: "refreshBoard"; projectId: string };
+  | { type: "refreshBoard"; projectId: string }
+  | { type: "refreshProject"; projectId: string }
+  | {
+      type: "updateProject";
+      projectId: string;
+      patch: { description?: string };
+    }
+  | {
+      type: "openBoard";
+      projectId: string;
+      label: string;
+      view?: "kanban" | "list";
+    };
 
 /** extension host → webview */
 export type ExtensionMessage =
@@ -70,7 +83,9 @@ export type ExtensionMessage =
       message: string;
     }
   | { type: "mutationError"; message: string }
-  | { type: "theme"; kind: "light" | "dark" | "highContrast" };
+  | { type: "theme"; kind: "light" | "dark" | "highContrast" }
+  | { type: "projectLoaded"; project: LinearProjectDetail }
+  | { type: "projectUpdated"; project: LinearProjectDetail };
 
 export interface WorkflowStateOption {
   id: string;
@@ -81,7 +96,7 @@ export interface WorkflowStateOption {
 export type ThemeKind = "light" | "dark" | "highContrast";
 
 export interface WebviewPanelBootstrap {
-  panel: "issue" | "board";
+  panel: "issue" | "board" | "project";
   issueId?: string;
   projectId?: string;
   themeKind?: ThemeKind;
@@ -102,6 +117,9 @@ export function isWebviewRequest(value: unknown): value is WebviewRequest {
     type === "moveIssue" ||
     type === "loadBoardPage" ||
     type === "saveBoardViewState" ||
-    type === "refreshBoard"
+    type === "refreshBoard" ||
+    type === "refreshProject" ||
+    type === "updateProject" ||
+    type === "openBoard"
   );
 }

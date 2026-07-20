@@ -20,7 +20,7 @@ export async function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(linearAuthProvider);
 
   const logoutCommand = vscode.commands.registerCommand(
-    "linear-connect.logout",
+    "linearlens.logout",
     async () => {
       const sessions = await linearAuthProvider.getSessions();
       for (const session of sessions) {
@@ -96,7 +96,7 @@ async function checkForSessions(
   const existingSessions = await linearAuthProvider.getSessions();
   await vscode.commands.executeCommand(
     "setContext",
-    "linear-connect.hasLinearSessions",
+    "linearlens.hasLinearSessions",
     existingSessions.length > 0
   );
 }
