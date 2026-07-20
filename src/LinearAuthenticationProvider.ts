@@ -17,7 +17,7 @@ import {
 import { sessionChanged } from "./oauth/sessionChanged";
 import { StoredLinearSession } from "./oauth/types";
 
-const OAUTH_REDIRECT_URL = `${vscode.env.uriScheme}://linear.linear-connect/callback`;
+const OAUTH_REDIRECT_URL = `${vscode.env.uriScheme}://taylorsegell.linearlens/callback`;
 const SECRET_STORAGE_KEY = "linear.auth";
 
 type SessionMap = Record<string, StoredLinearSession>;
@@ -31,8 +31,8 @@ export class LinearAuthenticationProvider
     this.disposable = vscode.Disposable.from(
       vscode.window.registerUriHandler(this.uriEventHandler),
       vscode.authentication.registerAuthenticationProvider(
-        "linear",
-        "Linear",
+        "linearlens",
+        "Linear Lens",
         this,
         { supportsMultipleAccounts: false }
       ),

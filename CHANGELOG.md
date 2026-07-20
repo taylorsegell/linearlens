@@ -1,29 +1,32 @@
 # Change Log
 
-All notable changes to the "linear-connect" extension will be documented in this file.
+All notable changes to **Linear Lens** (`taylorsegell.linearlens`) are documented in this file.
 
-## [Unreleased]
+## [1.0.0] - 2026-07-19
 
-### Changed
-- Board webview UI polish: theme-aware `--ll-*` design tokens, restyled filter chips, segmented Kanban/List toggle, denser issue cards and list rows aligned with Linear design language (VS Code theme variables preserved).
+First marketplace release under publisher `taylorsegell` as **Linear Lens**.
 
 ### Added
-- Project Detail panel — primary-click a sidebar project to open overview, milestones, recent issues, and editable description; open board via context menu, command palette, or in-panel buttons
-- Issue detail sidebar: edit status, priority, assignee, and labels inline
-- Issue detail: click sub-issues to open them in a new tab
-- Task Detail panel — click an issue in the Linear sidebar to open an in-IDE detail tab
-- Edit issue title, description, status, and priority from the panel
-- Add comments from the panel
-- View sub-issues and labels inline
-- Context menu: Open Issue in Browser
-- Project Kanban board — open via context menu, **Linear: Open Project Board**, or Project Detail in-panel buttons
-- List view toggle with sortable columns and inline status changes
-- Drag-and-drop status changes on Kanban cards (optimistic UI)
-- Board filters: status, label, assignee, and title search
-- Phase-label swimlane grouping (default; configurable via `linear.board.phaseLabelPrefix`)
-- Virtualized scrolling for large projects with paginated load-more
-- Click board card → opens existing Task Detail panel
-- Context menu: Open Project in Browser
+- Linear sidebar — Issues, Projects, Initiatives, Reviews (Personal API key)
+- Issue Detail panel — edit title, description, status, priority, assignee, labels; comments; clickable sub-issues
+- Project Detail panel — overview, milestones, recent issues, editable description
+- Project Kanban + List boards — DnD status, filters, phase swimlanes, virtualized scrolling
+- OAuth authentication provider id `linearlens` (registered; Accounts sign-in deferred — API key powers the UI for 1.0.0)
+- Board setting `linear.board.phaseLabelPrefix`
+
+### Changed
+- Extension id is now `taylorsegell.linearlens` (was `linear.linear-connect` in the upstream auth-provider lineage)
+- OAuth redirect URIs are `${uriScheme}://taylorsegell.linearlens/callback`
+
+### Notes
+- Agent assignment is not included in 1.0.0
+- Packaging builds both the extension host bundle and the webview on publish
+
+---
+
+## History (linear-connect lineage)
+
+Prior versions below refer to the upstream Linear Connect auth-provider package before the Linear Lens product cut.
 
 ## [2.0.0] - 2026-06-22
 

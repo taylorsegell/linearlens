@@ -1,15 +1,19 @@
 {
-  "name": "linear-connect",
-  "displayName": "Linear Connect",
-  "description": "Official Linear API authentication provider and sidebar for VS Code. OAuth for extensions plus Issues, Projects, Initiatives, and Reviews tree.",
-  "publisher": "linear",
-  "author": "Linear Orbit, Inc",
+  "name": "linearlens",
+  "displayName": "Linear Lens",
+  "description": "Linear in your IDE — sidebar for Issues, Projects, Initiatives, and Reviews, plus issue detail, project detail, and Kanban/List boards.",
+  "publisher": "taylorsegell",
+  "author": "Taylor Segell",
   "license": "MIT",
-  "version": "2.0.0",
+  "version": "1.0.0",
   "icon": "assets/light/128x128.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/taylorsegell/linearlens"
+  },
+  "homepage": "https://github.com/taylorsegell/linearlens",
+  "bugs": {
+    "url": "https://github.com/taylorsegell/linearlens/issues"
   },
   "engines": {
     "vscode": "^1.96.0"
@@ -19,6 +23,13 @@
   ],
   "categories": [
     "Other"
+  ],
+  "keywords": [
+    "linear",
+    "issues",
+    "project management",
+    "kanban",
+    "productivity"
   ],
   "activationEvents": [
     "onStartupFinished"
@@ -81,9 +92,9 @@
         "icon": "$(filter-filled)"
       },
       {
-        "command": "linear-connect.logout",
-        "title": "Linear: Logout all Linear API sessions",
-        "when": "linear-connect.hasLinearSessions"
+        "command": "linearlens.logout",
+        "title": "Linear Lens: Logout all Linear API sessions",
+        "when": "linearlens.hasLinearSessions"
       },
       {
         "command": "linear.openIssue",
@@ -112,7 +123,7 @@
       }
     ],
     "configuration": {
-      "title": "Linear Connect",
+      "title": "Linear Lens",
       "properties": {
         "linear.board.phaseLabelPrefix": {
           "type": "string",
@@ -174,8 +185,8 @@
     },
     "authentication": [
       {
-        "label": "Linear",
-        "id": "linear"
+        "label": "Linear Lens",
+        "id": "linearlens"
       }
     ]
   },
@@ -183,14 +194,16 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit -p ./",
-    "vscode:prepublish": "npm run esbuild-base -- --minify",
+    "vscode:prepublish": "yarn build:publish",
+    "build:publish": "yarn esbuild-base -- --minify && yarn build:webview",
     "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=dist/main.js --external:vscode --format=cjs --platform=node",
-    "esbuild": "npm run esbuild-base -- --sourcemap",
-    "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
-    "compile": "npm run typecheck",
+    "esbuild": "yarn esbuild-base -- --sourcemap",
+    "esbuild-watch": "yarn esbuild-base -- --sourcemap --watch",
+    "compile": "yarn typecheck",
     "build:webview": "vite build --config vite.webview.config.ts",
     "build:webview:watch": "vite build --config vite.webview.config.ts --watch",
-    "build": "yarn esbuild && yarn build:webview"
+    "build": "yarn esbuild && yarn build:webview",
+    "package": "vsce package --no-dependencies"
   },
   "devDependencies": {
     "@dnd-kit/core": "^6.3.1",

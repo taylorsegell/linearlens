@@ -1,111 +1,72 @@
-# Linear VS Code authentication provider
+# Linear Lens
 
 [![CI](https://github.com/taylorsegell/linearlens/actions/workflows/ci.yml/badge.svg)](https://github.com/taylorsegell/linearlens/actions/workflows/ci.yml)
 
-[This extension](https://marketplace.visualstudio.com/items?itemName=linear.linear-connect) exposes an authentication provider to connect to the Linear API.
+Linear in VS Code and Cursor — browse Issues, Projects, Initiatives, and Reviews in the sidebar, then open **Issue Detail**, **Project Detail**, and **Kanban/List boards** without leaving the IDE.
 
-You won't usually install this extension directly — another VS Code extension pulls it in as a dependency.
+Marketplace id: `taylorsegell.linearlens`
 
-## How to use
+## Features
 
-> **Note:** Linear Connect v2.0.0 requires VS Code 1.96.0 or later (Cursor builds on the same engine) and uses refresh tokens. Users upgrading from v1.x must sign in again once.
+- **Sidebar** — Issues (filterable), Projects, Initiatives, Reviews
+- **Issue Detail** — edit title, description, status, priority, assignee, labels; comment; open sub-issues
+- **Project Detail** — overview, milestones, recent issues, editable description
+- **Project boards** — Kanban + List, drag-and-drop status, filters, phase swimlanes
+- **Auth** — Personal API key for the sidebar and panels (required). OAuth provider id `linearlens` is registered for a future Accounts-menu flow.
 
-If you're building a VS Code extension and want to interact with the [Linear API](https://linear.app/developers):
+## Requirements
 
-### Include the Linear Connect extension
+- VS Code / Cursor with engine **1.96.0** or later
+- A [Linear Personal API key](https://linear.app/settings/api) (Settings → API)
 
-Add [linear-connect](https://marketplace.visualstudio.com/items?itemName=linear.linear-connect) to `extensionDependencies` in your `package.json`:
+## Getting started
 
-```json
-"extensionDependencies": [
-  "linear.linear-connect"
-]
-```
+1. Install **Linear Lens** from the marketplace (or a `.vsix`).
+2. Open the **Linear** activity bar icon.
+3. Run **Linear: Set API Key** and paste your key.
+4. Click an issue or project to open panels; use **Linear: Open Project Board** or the project context menu for Kanban/List.
 
-### Get or create a Linear API session
+### OAuth (deferred)
 
-```typescript
-import * as vscode from "vscode";
-import { LinearClient } from "@linear/sdk";
+Accounts-menu OAuth is not configured for 1.0.0. When added later:
 
-const session = await vscode.authentication.getSession(
-  "linear",
-  ["read"],
-  { createIfNone: true }
-);
+- Provider id: `linearlens`
+- Redirects: `vscode://taylorsegell.linearlens/callback` and `cursor://taylorsegell.linearlens/callback`
+- Requires your own Linear OAuth app + `OAUTH_CLIENT_ID` in `src/oauth/linearOAuth.ts`
 
-if (session) {
-  const linearClient = new LinearClient({
-    accessToken: session.accessToken,
-  });
-
-  console.log("Acquired a Linear API session", {
-    account: session.account,
-  });
-}
-```
-
-See [Open issue in Linear](https://github.com/linear/linear-vscode-open-issue) for a working example extension.
-
----
+Safe to install alongside official `linear.linear-connect` — provider ids differ (`linearlens` vs `linear`).
 
 ## Development
 
-**Agent / contributor context:** see [AGENTS.md](./AGENTS.md) (also [CLAUDE.md](./CLAUDE.md)).
-
-### Setup
+**Agent / contributor context:** see [AGENTS.md](./AGENTS.md).
 
 ```bash
 yarn install
-yarn esbuild
+yarn build
 ```
-
-### Commands
 
 | Command | Purpose |
 |---------|---------|
-| `yarn test` | Run unit tests |
+| `yarn test` | Unit tests |
 | `yarn typecheck` | TypeScript check |
-| `yarn esbuild` | Build `dist/main.js` |
-| `yarn esbuild-watch` | Rebuild on change |
+| `yarn build` | Extension host + webview |
+| `yarn package` | Build installable `.vsix` |
 
-### Run locally (VS Code or Cursor)
+Press **F5** (**Run Extension**) to open an Extension Development Host.
 
-1. Open this repo in VS Code or Cursor.
-2. Press **F5** (**Run Extension**) to open an Extension Development Host.
-3. Sign in via **Accounts → Linear**, or run in the dev host Debug Console:
+## Publishing
 
-```javascript
-await vscode.authentication.getSession("linear", ["read"], { createIfNone: true })
-```
-
-4. Log out with **Linear: Logout all Linear API sessions** from the command palette.
-
-**Cursor:** OAuth uses `cursor://linear.linear-connect/callback`. Register that redirect URI on your Linear OAuth app if sign-in fails with a redirect mismatch.
-
-### Publishing
-
-Install the packaging tool:
+1. Ensure `publisher` is `taylorsegell`, `name` is `linearlens`, and `version` is bumped.
+2. Update [CHANGELOG.md](./CHANGELOG.md).
+3. Create a [Personal Access Token](https://marketplace.visualstudio.com/manage) with Marketplace publish rights for publisher `taylorsegell`.
+4. Package and publish:
 
 ```bash
-npm i -g @vscode/vsce
+yarn typecheck && yarn test && yarn package
+npx @vscode/vsce publish
+# Optional Open VSX (Cursor-friendly):
+npx ovsx publish
 ```
-
-Before release:
-
-1. Bump the version in `package.json` (semver).
-2. Add entries to `CHANGELOG.md`.
-
-Build the VSIX:
-
-```bash
-yarn esbuild
-vsce package
-```
-
-This produces `linear-connect-<version>.vsix` (e.g. `linear-connect-2.0.0.vsix`).
-
-Publish from the [VS Code marketplace publisher dashboard](https://marketplace.visualstudio.com/manage/publishers/Linear).
 
 ## License
 
