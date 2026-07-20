@@ -12,7 +12,7 @@ import { StoredLinearSession } from "../oauth/types";
 describe("buildAuthorizeUrl", () => {
   it("joins scopes as comma-separated string", () => {
     const url = buildAuthorizeUrl({
-      redirectUri: "vscode://taylorsegell.linearlens/callback",
+      redirectUri: "vscode://arkitect.linearlens/callback",
       scopes: ["read", "write"],
       state: "state-123",
     });
@@ -47,7 +47,7 @@ describe("exchangeCodeForToken", () => {
 
     const result = await exchangeCodeForToken({
       code: "auth-code",
-      redirectUri: "vscode://taylorsegell.linearlens/callback",
+      redirectUri: "vscode://arkitect.linearlens/callback",
     });
 
     expect(result.access_token).toBe("new-access");
@@ -69,7 +69,7 @@ describe("exchangeCodeForToken", () => {
     await expect(
       exchangeCodeForToken({
         code: "bad",
-        redirectUri: "vscode://taylorsegell.linearlens/callback",
+        redirectUri: "vscode://arkitect.linearlens/callback",
       })
     ).rejects.toThrow(/invalid_grant|Bad Request/);
   });

@@ -4,7 +4,7 @@
 
 Linear in VS Code and Cursor — browse Issues, Projects, Initiatives, and Reviews in the sidebar, then open **Issue Detail**, **Project Detail**, and **Kanban/List boards** without leaving the IDE.
 
-Marketplace id: `taylorsegell.linearlens`
+Marketplace id: `arkitect.linearlens`
 
 ## Features
 
@@ -31,7 +31,7 @@ Marketplace id: `taylorsegell.linearlens`
 Accounts-menu OAuth is not configured for 1.0.0. When added later:
 
 - Provider id: `linearlens`
-- Redirects: `vscode://taylorsegell.linearlens/callback` and `cursor://taylorsegell.linearlens/callback`
+- Redirects: `vscode://arkitect.linearlens/callback` and `cursor://arkitect.linearlens/callback`
 - Requires your own Linear OAuth app + `OAUTH_CLIENT_ID` in `src/oauth/linearOAuth.ts`
 
 Safe to install alongside official `linear.linear-connect` — provider ids differ (`linearlens` vs `linear`).
@@ -56,9 +56,9 @@ Press **F5** (**Run Extension**) to open an Extension Development Host.
 
 ## Publishing
 
-1. Ensure `publisher` is `taylorsegell`, `name` is `linearlens`, and `version` is bumped.
+1. Ensure `publisher` is `arkitect`, `name` is `linearlens`, and `version` is bumped.
 2. Update [CHANGELOG.md](./CHANGELOG.md).
-3. Create a [Personal Access Token](https://marketplace.visualstudio.com/manage) with Marketplace publish rights for publisher `taylorsegell`.
+3. Create a [Personal Access Token](https://marketplace.visualstudio.com/manage) with Marketplace publish rights for publisher `arkitect`.
 4. Package and publish:
 
 ```bash

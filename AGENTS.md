@@ -1,11 +1,11 @@
 # AGENTS.md
 
-Context for AI agents and contributors working on **Linear Lens** (`taylorsegell.linearlens`) — Linear sidebar + panels for VS Code-compatible editors (VS Code, Cursor, etc.).
+Context for AI agents and contributors working on **Linear Lens** (`arkitect.linearlens`) — Linear sidebar + panels for VS Code-compatible editors (VS Code, Cursor, etc.).
 
 ## Rules
 
 - **Never rename** the auth provider id (`linearlens`) or secrets storage key (`linear.auth`) without an explicit migration task.
-- **OAuth** is deferred for a future release. Sidebar/panels use a Personal API key. When OAuth ships, redirect URIs will be `${vscode.env.uriScheme}://taylorsegell.linearlens/callback` and `OAUTH_CLIENT_ID` in `src/oauth/linearOAuth.ts` must match your Linear OAuth app.
+- **OAuth** is deferred for a future release. Sidebar/panels use a Personal API key. When OAuth ships, redirect URIs will be `${vscode.env.uriScheme}://arkitect.linearlens/callback` and `OAUTH_CLIENT_ID` in `src/oauth/linearOAuth.ts` must match your Linear OAuth app.
 - **Minimize diffs** for auth/storage behavior when changing OAuth internals.
 - **Do not commit or push** unless the user explicitly asks.
 - **Verify before finishing:** `yarn typecheck && yarn test && yarn build`.
@@ -19,7 +19,7 @@ Context for AI agents and contributors working on **Linear Lens** (`taylorsegell
 | VS Code API | See `package.json` → `engines.vscode` |
 | Bundle | esbuild → `dist/main.js`; Vite → `dist/webview/` |
 | Tests | Vitest — `src/test/` |
-| Marketplace | `taylorsegell.linearlens` |
+| Marketplace | `arkitect.linearlens` |
 
 ## Project structure
 
@@ -84,7 +84,7 @@ If F5 preLaunch fails, run `yarn build` manually first.
 4. Update `CHANGELOG.md` for user-visible changes.
 5. Open a PR — CI must pass.
 
-**Release:** bump semver in `package.json`, update `CHANGELOG.md`, `yarn package` (runs `vscode:prepublish` = minify host + build webview), publish as `taylorsegell` from your Marketplace publisher account.
+**Release:** bump semver in `package.json`, update `CHANGELOG.md`, `yarn package` (runs `vscode:prepublish` = minify host + build webview), publish as `arkitect` from your Marketplace publisher account.
 
 ## Boundaries
 

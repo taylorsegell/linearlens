@@ -17,7 +17,7 @@ import {
 import { sessionChanged } from "./oauth/sessionChanged";
 import { StoredLinearSession } from "./oauth/types";
 
-const OAUTH_REDIRECT_URL = `${vscode.env.uriScheme}://taylorsegell.linearlens/callback`;
+const OAUTH_REDIRECT_URL = `${vscode.env.uriScheme}://arkitect.linearlens/callback`;
 const SECRET_STORAGE_KEY = "linear.auth";
 
 type SessionMap = Record<string, StoredLinearSession>;

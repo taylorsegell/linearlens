@@ -1,10 +1,10 @@
 # Change Log
 
-All notable changes to **Linear Lens** (`taylorsegell.linearlens`) are documented in this file.
+All notable changes to **Linear Lens** (`arkitect.linearlens`) are documented in this file.
 
 ## [1.0.0] - 2026-07-19
 
-First marketplace release under publisher `taylorsegell` as **Linear Lens**.
+First marketplace release under publisher `arkitect` as **Linear Lens**.
 
 ### Added
 - Linear sidebar — Issues, Projects, Initiatives, Reviews (Personal API key)
@@ -15,8 +15,8 @@ First marketplace release under publisher `taylorsegell` as **Linear Lens**.
 - Board setting `linear.board.phaseLabelPrefix`
 
 ### Changed
-- Extension id is now `taylorsegell.linearlens` (was `linear.linear-connect` in the upstream auth-provider lineage)
-- OAuth redirect URIs are `${uriScheme}://taylorsegell.linearlens/callback`
+- Extension id is now `arkitect.linearlens` (was `linear.linear-connect` in the upstream auth-provider lineage)
+- OAuth redirect URIs are `${uriScheme}://arkitect.linearlens/callback`
 
 ### Notes
 - Agent assignment is not included in 1.0.0

@@ -2,7 +2,7 @@
   "name": "linearlens",
   "displayName": "Linear Lens",
   "description": "Linear in your IDE — sidebar for Issues, Projects, Initiatives, and Reviews, plus issue detail, project detail, and Kanban/List boards.",
-  "publisher": "taylorsegell",
+  "publisher": "arkitect",
   "author": "Taylor Segell",
   "license": "MIT",
   "version": "1.0.0",
