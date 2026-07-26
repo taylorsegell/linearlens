@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
+  CARD_HEIGHT as VIEW_CARD_HEIGHT,
+} from "../../webview-ui/src/components/board/KanbanBoardView";
+import {
   KANBAN_CARD_CONTENT_HEIGHT,
   KANBAN_CARD_HEIGHT,
   KANBAN_CARD_TITLE_LINES,
@@ -19,5 +22,10 @@ describe("kanbanCardLayout", () => {
 
   it("is taller than the previous 92px row that clipped assignees", () => {
     expect(KANBAN_CARD_HEIGHT).toBeGreaterThan(92);
+  });
+
+  it("KanbanBoardView re-exports the shared CARD_HEIGHT", () => {
+    expect(VIEW_CARD_HEIGHT).toBe(KANBAN_CARD_HEIGHT);
+    expect(VIEW_CARD_HEIGHT).toBe(120);
   });
 });

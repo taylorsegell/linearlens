@@ -15,11 +15,11 @@ import { CSS } from "@dnd-kit/utilities";
 import { FixedSizeList } from "react-window";
 import { groupIssuesIntoSwimlanes } from "../../boardLogic";
 import type { BoardIssueCard } from "../../hooks/useBoardMessaging";
+import { CARD_HEIGHT } from "../../kanbanCardLayout";
 import { Icon } from "../ui/Icon";
 import { IssueCard } from "./IssueCard";
 
 const PHASE_PREFIX = "phase-";
-const CARD_HEIGHT = 92;
 const COLUMN_WIDTH = 280;
 const COLLAPSED_COLUMN_WIDTH = 40;
 
