@@ -8,3 +8,4 @@ node_modules
 *.backup
 docs/**
 docs/*.md
+DESIGN.md
