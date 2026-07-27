@@ -9,3 +9,5 @@ node_modules
 docs/**
 docs/*.md
 DESIGN.md
+.env
+.worktrees

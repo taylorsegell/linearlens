@@ -335,7 +335,7 @@ The marketing surface treats Display and Text as one continuous voice; the famil
 | `{typography.eyebrow}` | 13px | 500 | 1.30 | 0.4px | Section eyebrow (slight positive tracking) |
 | `{typography.mono}` | 13px | 400 | 1.50 | 0 | Linear Mono for code in product screenshots |
 
-### Principles
+### Principles 
 
 - **Aggressive negative tracking on display** (-3.0px at 80px ≈ 4% of size).
 - **Single voice from display to body.** Display-xl at 600 → body at 400 — same family, narrower weights.
