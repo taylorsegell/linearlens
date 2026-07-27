@@ -6,6 +6,7 @@ All notable changes to **Linear Lens** (`arkitect.linearlens`) are documented in
 
 ### Fixed
 - Kanban board cards no longer clip assignee/meta under multi-line titles (SOK-200)
+- README / docs Personal API key link now points to Settings → Account → Security & Access (#2)
 
 ## [1.0.0] - 2026-07-19
 

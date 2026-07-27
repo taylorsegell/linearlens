@@ -104,7 +104,7 @@ Linear Lens turns Linear from a tab you visit into a surface that lives next to 
 
 **Repository:** clone or fork [Linear Lens on GitHub](https://github.com/taylorsegell/linearlens), run `yarn install && yarn build`, then press F5 (**Run Extension**) and connect with **Linear: Set API Key**.
 
-**Marketplace:** install `arkitect.linearlens` in VS Code or Cursor (engine 1.96.0+), open the Linear activity bar icon, paste a [Personal API key](https://linear.app/settings/api), and open an issue or **Linear: Open Project Board**.
+**Marketplace:** install `arkitect.linearlens` in VS Code or Cursor (engine 1.96.0+), open the Linear activity bar icon, paste a [Personal API key](https://linear.app/settings/account/security), and open an issue or **Linear: Open Project Board**.
 
 Worth poking once you are connected:
 - Filter Issues by status or project from the sidebar title menu

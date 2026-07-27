@@ -21,7 +21,7 @@ Marketplace id: `arkitect.linearlens`
 ## Requirements
 
 - VS Code / Cursor with engine **1.96.0** or later
-- A [Linear Personal API key](https://linear.app/settings/api) (Settings → API)
+- A [Linear Personal API key](https://linear.app/settings/account/security) (Settings → Account → Security & Access)
 
 ## Getting started
 

@@ -117,7 +117,8 @@ export async function promptForApiKey(
 ): Promise<boolean> {
   const apiKey = await vscode.window.showInputBox({
     title: "Linear Personal API Key",
-    prompt: "Paste your Linear Personal API Key",
+    prompt:
+      "Paste your key from Linear → Settings → Account → Security & Access",
     password: true,
     ignoreFocusOut: true,
     placeHolder: "lin_api_…",
