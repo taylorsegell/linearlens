@@ -2,22 +2,26 @@
 
 [![CI](https://github.com/taylorsegell/linearlens/actions/workflows/ci.yml/badge.svg)](https://github.com/taylorsegell/linearlens/actions/workflows/ci.yml)
 
-Linear in VS Code and Cursor — browse Issues, Projects, Initiatives, and Reviews in the sidebar, then open **Issue Detail**, **Project Detail**, and **Kanban/List boards** without leaving the IDE.
+Linear in VS Code and Cursor. Browse Issues, Projects, Initiatives, and Reviews in the sidebar, then open **Issue Detail**, **Project Detail**, and **Kanban/List boards** without leaving the IDE.
 
 Marketplace id: `arkitect.linearlens`
 
+![Issue detail in Linear Lens](assets/images/issue.png)
+
 ## Features
 
-- **Sidebar** — Issues (filterable), Projects, Initiatives, Reviews
-- **Issue Detail** — edit title, description, status, priority, assignee, labels; comment; open sub-issues
-- **Project Detail** — overview, milestones, recent issues, editable description
-- **Project boards** — Kanban + List, drag-and-drop status, filters, phase swimlanes
-- **Auth** — Personal API key for the sidebar and panels (required). OAuth provider id `linearlens` is registered for a future Accounts-menu flow.
+- **Sidebar**: Issues (filterable), Projects, Initiatives, Reviews
+- **Issue Detail**: edit title, description, status, priority, assignee, labels; comment; open sub-issues
+- **Project Detail**: overview, milestones, recent issues, editable description
+- **Project boards**: Kanban + List, drag-and-drop status, filters, phase swimlanes
+- **Auth**: Personal API key for the sidebar and panels (required). OAuth provider id `linearlens` is registered for a future Accounts-menu flow.
+
+![Kanban project board](assets/images/board.png)
 
 ## Requirements
 
 - VS Code / Cursor with engine **1.96.0** or later
-- A [Linear Personal API key](https://linear.app/settings/api) (Settings → API)
+- A [Linear Personal API key](https://linear.app/settings/account/security) (Settings → Account → Security & Access)
 
 ## Getting started
 
@@ -34,7 +38,7 @@ Accounts-menu OAuth is not configured for 1.0.0. When added later:
 - Redirects: `vscode://arkitect.linearlens/callback` and `cursor://arkitect.linearlens/callback`
 - Requires your own Linear OAuth app + `OAUTH_CLIENT_ID` in `src/oauth/linearOAuth.ts`
 
-Safe to install alongside official `linear.linear-connect` — provider ids differ (`linearlens` vs `linear`).
+Safe to install alongside official `linear.linear-connect`; provider ids differ (`linearlens` vs `linear`).
 
 ## Development
 
@@ -70,4 +74,4 @@ npx ovsx publish
 
 ## License
 
-MIT — see [LICENSE](./LICENSE).
+MIT: see [LICENSE](./LICENSE).
