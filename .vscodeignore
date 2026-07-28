@@ -4,12 +4,15 @@
 .cursor/**
 .superpowers/**
 .github/**
+.worktrees/**
 docs/**
+post/**
 out/
 src/
 webview-ui/
 node_modules/**
 .gitignore
+.env
 .yarnrc
 **/tsconfig.json
 **/.eslintrc.json

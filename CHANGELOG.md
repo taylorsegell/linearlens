@@ -4,9 +4,14 @@ All notable changes to **Linear Lens** (`arkitect.linearlens`) are documented in
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-07-27
+
 ### Fixed
 - Kanban board cards no longer clip assignee/meta under multi-line titles (SOK-200)
 - README / docs Personal API key link now points to Settings → Account → Security & Access (#2)
+
+### Changed
+- Packaging excludes `.env`, `.worktrees/`, and `post/` from the VSIX
 
 ## [1.0.0] - 2026-07-19
 
